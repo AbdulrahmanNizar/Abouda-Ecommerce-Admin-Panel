@@ -1,14 +1,17 @@
-import { createStore } from 'vuex'
+import { createStore } from "vuex";
 
-export default createStore({
+const store = createStore({
   state: {
+    points: 0,
   },
-  getters: {
-  },
+  getters: {},
   mutations: {
+    updatePoints(state, payload): void {
+      state.points += payload;
+    },
   },
-  actions: {
-  },
-  modules: {
-  }
-})
+  actions: {},
+  modules: {},
+});
+
+export default store;
