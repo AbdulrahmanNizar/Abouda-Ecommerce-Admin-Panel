@@ -1,15 +1,9 @@
 import { createStore } from "vuex";
 
 const store = createStore({
-  state: {
-    points: 0,
-  },
+  state: {},
   getters: {},
-  mutations: {
-    updatePoints(state, payload): void {
-      state.points += payload;
-    },
-  },
+  mutations: {},
   actions: {},
   modules: {},
 });

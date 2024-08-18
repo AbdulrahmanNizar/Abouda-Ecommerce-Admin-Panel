@@ -49,12 +49,6 @@
             error.$message
           }}</span>
 
-          <router-link
-            class="text-decoration-none mt-2 d-md-none d-block"
-            :to="{ path: '/signup' }"
-            >Sign Up</router-link
-          >
-
           <button class="btn btn-dark mt-4 mb-2 w-100" @click="login">
             Login
           </button>
@@ -65,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, onMounted } from "vue";
+import { computed, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { required, email, minLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
@@ -75,14 +69,6 @@ import NavBar from "@/components/NavBar.vue";
 const router = useRouter();
 const errorWrongEmailOrPassword = ref<string>("");
 const showErrorWrongEmailOrPassword = ref<boolean>(false);
-
-onMounted(() => {
-  const JwtToken = localStorage.getItem("JwtToken");
-
-  if (JwtToken) {
-    router.push({ path: "/" });
-  }
-});
 
 const formData = reactive({
   email: "",

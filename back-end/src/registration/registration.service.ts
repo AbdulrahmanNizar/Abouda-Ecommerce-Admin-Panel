@@ -83,7 +83,7 @@ export class RegistrationService {
   ): SuccessResponseObjectDto | void {
     // verfiying the user token
     try {
-      const tokenVerify = this.jwtService.verify(requestInfo.token, {
+      this.jwtService.verify(requestInfo.token, {
         secret: 'aboudasecretkey2010510',
       });
 

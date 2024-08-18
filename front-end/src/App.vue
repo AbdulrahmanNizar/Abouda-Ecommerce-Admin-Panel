@@ -6,6 +6,42 @@
   </router-view>
 </template>
 
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const JwtToken = ref<string | null>(localStorage.getItem("JwtToken"));
+
+onMounted(async (): Promise<void> => {
+  if (JwtToken.value != "") {
+    const requestOptions: any = {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: JwtToken.value,
+      }),
+    };
+
+    const response = await fetch(
+      "http://localhost:3000/registration/validateTheAuthToken",
+      requestOptions
+    );
+    const data = await response.json();
+    if (data.name == "JsonWebTokenError") {
+      localStorage.removeItem("UserId");
+      localStorage.removeItem("JwtToken");
+      router.push({ path: "/login" });
+    }
+  } else {
+    localStorage.removeItem("UserId");
+    localStorage.removeItem("JwtToken");
+    router.push({ path: "/login" });
+  }
+});
+</script>
+
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Quicksand&display=swap");
 
