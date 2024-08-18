@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SignUp from "@/views/SignUp.vue";
 import Login from "@/views/Login.vue";
-import Home from "@/views/Home.vue";
+import Overview from "@/views/Overview.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     name: "Home",
     path: "/",
-    component: Home,
+    component: Overview,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },

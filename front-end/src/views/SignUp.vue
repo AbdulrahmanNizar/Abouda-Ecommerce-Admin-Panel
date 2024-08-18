@@ -132,7 +132,7 @@ const signup = async () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/registration/signup",
+        "http://192.168.0.46:3000/registration/signup",
         requestOptions
       );
       const data = await response.json();

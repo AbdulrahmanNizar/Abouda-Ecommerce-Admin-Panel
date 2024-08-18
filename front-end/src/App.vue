@@ -25,7 +25,7 @@ onMounted(async (): Promise<void> => {
     };
 
     const response = await fetch(
-      "http://localhost:3000/registration/validateTheAuthToken",
+      "http://192.168.0.46:3000/registration/validateTheAuthToken",
       requestOptions
     );
     const data = await response.json();
@@ -33,6 +33,8 @@ onMounted(async (): Promise<void> => {
       localStorage.removeItem("UserId");
       localStorage.removeItem("JwtToken");
       router.push({ path: "/login" });
+    } else {
+      router.push({ path: "/" });
     }
   } else {
     localStorage.removeItem("UserId");

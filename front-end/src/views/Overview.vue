@@ -1,7 +1,7 @@
 <template>
   <div class="h-100">
     <nav
-      class="navbar navbar-expand-lg d-flex flex-row justify-content-start align-items-start"
+      class="navbar navbar-expand-lg d-flex flex-row justify-content-start align-items-start border-bottom"
     >
       <div class="container-fluid w-100">
         <div class="dropdown">
@@ -17,6 +17,12 @@
             <li>
               <a href="#" class="dropdown-item">
                 <i class="bi bi-shop"></i> Abouda Store</a
+              >
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a href="#" class="dropdown-item">
+                <i class="bi bi-plus"></i> Add New</a
               >
             </li>
           </ul>
@@ -75,6 +81,23 @@
       <p class="text-muted text-start ms-5">Overview of your store</p>
 
       <hr class="w-100 text-black" />
+    </div>
+
+    <div
+      class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
+    >
+      <div class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6">
+        <h4>Total Revenue</h4>
+        <h2 class="fw-bold">$0</h2>
+      </div>
+      <div class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6">
+        <h4>Sales</h4>
+        <h2 class="fw-bold">0</h2>
+      </div>
+      <div class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6">
+        <h4>Products In Stoke</h4>
+        <h2 class="fw-bold">0</h2>
+      </div>
     </div>
   </div>
 </template>
