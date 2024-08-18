@@ -1,6 +1,9 @@
 <template>
-  <div class="h-100 d-flex flex-row justify-content-center align-items-center">
+  <div
+    class="h-100 d-flex flex-lg-row flex-column justify-content-center align-items-center"
+  >
     <SideBar />
+    <NavBar />
     <div
       class="w-100 d-flex flex-row justify-content-center align-items-center h-75"
     >
@@ -14,7 +17,7 @@
         >
           <transition name="fadeError">
             <div
-              class="alert alert-danger w-100"
+              class="alert alert-danger w-100 text-center"
               role="alert"
               v-show="showErrorWrongEmailOrPassword"
             >
@@ -67,6 +70,7 @@ import { useRouter } from "vue-router";
 import { required, email, minLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import SideBar from "@/components/SideBar.vue";
+import NavBar from "@/components/NavBar.vue";
 
 const router = useRouter();
 const errorWrongEmailOrPassword = ref<string>("");

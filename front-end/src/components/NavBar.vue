@@ -1,7 +1,6 @@
 <template>
   <div
-    class="shadow d-lg-flex flex-column justify-content-center align-items-center bg-black bg-gradient h-100 d-none"
-    style="width: 39%"
+    class="shadow d-flex d-lg-none flex-column justify-content-center align-items-center bg-black bg-gradient w-100 h-25"
   >
     <h3 class="text-white text-center">
       Abouda E-commrece <br />

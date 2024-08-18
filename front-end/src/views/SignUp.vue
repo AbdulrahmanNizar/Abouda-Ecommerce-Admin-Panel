@@ -1,6 +1,9 @@
 <template>
-  <div class="h-100 d-flex flex-row justify-content-center align-items-center">
+  <div
+    class="h-100 d-flex flex-lg-row flex-column justify-content-center align-items-center"
+  >
     <SideBar />
+    <NavBar />
     <div
       class="w-100 d-flex flex-row justify-content-center align-items-center h-75"
     >
@@ -14,7 +17,7 @@
         >
           <transition name="fadeError">
             <div
-              class="alert alert-danger w-100"
+              class="alert alert-danger w-100 text-center"
               role="alert"
               v-show="showErrorMessageForAlreadyExsitUsername"
             >
@@ -73,12 +76,6 @@
             >{{ error.$message }}</span
           >
 
-          <router-link
-            class="text-decoration-none mt-2 d-md-none d-block"
-            :to="{ path: '/login' }"
-            >Login</router-link
-          >
-
           <button class="btn btn-dark mt-4 mb-2 w-100" @click="signup">
             Sign Up
           </button>
@@ -94,6 +91,7 @@ import { useRouter } from "vue-router";
 import { email, required, minLength, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import SideBar from "@/components/SideBar.vue";
+import NavBar from "@/components/NavBar.vue";
 
 const router = useRouter();
 const errorMessageForAlreadyExistUsername = ref<string>("");
