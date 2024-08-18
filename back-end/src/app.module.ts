@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RegistrationModule } from './registration/registration.module';
+import { StoresManagementModule } from './stores-management/stores-management.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { RegistrationModule } from './registration/registration.module';
       'mongodb://localhost:27017/abouda-e-commerce-admin-panel',
     ),
     RegistrationModule,
+    StoresManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
