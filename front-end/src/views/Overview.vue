@@ -21,7 +21,12 @@
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
-              <a href="#" class="dropdown-item">
+              <a
+                href="#"
+                class="dropdown-item"
+                data-bs-toggle="modal"
+                data-bs-target="#createNewStoreModal"
+              >
                 <i class="bi bi-plus"></i> Add New</a
               >
             </li>
@@ -41,33 +46,49 @@
         <div class="collapse navbar-collapse ms-5" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"
-                >Overview</a
+              <router-link class="nav-link active" :to="{ path: '/' }"
+                >Overview</router-link
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Billboards</a>
+              <router-link class="nav-link active" :to="{ path: '/billboards' }"
+                >Billboards</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Categories</a>
+              <router-link class="nav-link active" :to="{ path: '/categories' }"
+                >Categories</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Sizes</a>
+              <router-link class="nav-link active" :to="{ path: '/sizes' }"
+                >Sizes</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Colors</a>
+              <router-link class="nav-link active" :to="{ path: '/colors' }"
+                >Colors</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Products</a>
+              <router-link class="nav-link active" :to="{ path: '/products' }"
+                >Products</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Orders</a>
+              <router-link class="nav-link active" :to="{ path: '/orders' }"
+                >Orders</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Settings</a>
+              <router-link class="nav-link active" :to="{ path: '/settings' }"
+                >Settings</router-link
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Account</a>
+              <router-link class="nav-link active" :to="{ path: '/account' }"
+                >Account</router-link
+              >
             </li>
           </ul>
         </div>
@@ -99,7 +120,99 @@
         <h2 class="fw-bold">0</h2>
       </div>
     </div>
+
+    <div
+      class="modal fade"
+      id="createNewStoreModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel1">
+              Create New Store
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <label for="#newStoreNameInt" class="form-label"
+              >New Store Name</label
+            >
+            <input
+              id="newStoreNameInt"
+              class="form-control mt-1"
+              type="text"
+              v-model="newStoreName"
+              placeholder="Enter A Name For The New Store"
+            />
+            <hr class="w-100 text-black" />
+            <label for="#newStoreAdminsInt" class="form-label"
+              >New Store Admins</label
+            >
+            <input
+              id="newStoreAdminsInt"
+              type="text"
+              class="form-control mt-1"
+              placeholder="Add , Between The Names"
+              v-model="newStoreAdmins"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-dark" @click="createNewStore">
+              Create
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+
+const newStoreName = ref<string>("");
+const newStoreAdmins = ref<string>("");
+
+const createNewStore = async (): Promise<void> => {
+  if (newStoreName.value != "" && newStoreAdmins.value != "") {
+    const newStoreAdminsInArr: string[] = newStoreAdmins.value.split(",");
+    const requestOptions: any = {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        storeName: newStoreName.value,
+        storeAdmins: newStoreAdminsInArr,
+      }),
+    };
+
+    const response = await fetch(
+      "http://192.168.0.46:3000/stores-management/createStore",
+      requestOptions
+    );
+    const data = await response.json();
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 10);
+    }
+  }
+};
+</script>
