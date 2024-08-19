@@ -16,7 +16,9 @@ export class RegistrationService {
     private jwtService: JwtService,
   ) {}
 
-  async signup(requestInfo: SignUpUserDto): Promise<SuccessResponseObjectDto> {
+  async signup(
+    requestInfo: SignUpUserDto,
+  ): Promise<SuccessResponseObjectDto | void> {
     // checking if the username valid or no
     const checkTheUserName = await this.userModel.find({
       username: requestInfo.username,
@@ -50,7 +52,9 @@ export class RegistrationService {
     }
   }
 
-  async login(requestInfo: LoginUserDto): Promise<SuccessResponseObjectDto> {
+  async login(
+    requestInfo: LoginUserDto,
+  ): Promise<SuccessResponseObjectDto | void> {
     // checking if the user exist or no
     const userExists = await this.userModel.find({ email: requestInfo.email });
 

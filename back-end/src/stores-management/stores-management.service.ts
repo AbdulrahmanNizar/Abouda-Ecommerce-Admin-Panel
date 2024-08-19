@@ -7,6 +7,7 @@ import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { GetStoresDto } from './dto/GetStoresDto';
 import { todayDate } from 'src/helpers/Date';
 import { DeleteStoreDto } from './dto/DeleteStoreDto';
+import { UpdateStoreDto } from './dto/UpdateStoreDto';
 
 @Injectable()
 export class StoresManagementService {
@@ -79,6 +80,52 @@ export class StoresManagementService {
     }
   }
 
+  async updateStore(
+    requestInfo: UpdateStoreDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    // checking if the new store name exist or no
+    const storesInDB = await this.storeModel.find({
+      storeName: requestInfo.newStoreName,
+    });
+
+    if (storesInDB.length > 0) {
+      // throwing an error if the new store name exist
+      throw new HttpException('The new store name is already exist', 400);
+    } else {
+      // getting the selected store by it id
+      const storeInDB = await this.storeModel.find({
+        _id: requestInfo.storeId,
+      });
+      const storeAdmins = storeInDB[0].storeAdmins;
+
+      // looping throught the new admins
+      for (let i = 0; i < requestInfo.newStoreAdmins.length; i++) {
+        // checking if the store admins doesn't include the new admin
+        if (!storeAdmins.includes(requestInfo.newStoreAdmins[i])) {
+          // pushing the new admin to the store admins
+          storeAdmins.push(requestInfo.newStoreAdmins[i]);
+        }
+      }
+
+      // updating the store settings in the database
+      await this.storeModel.updateOne(
+        { _id: requestInfo.storeId },
+        {
+          $set: {
+            storeName: requestInfo.newStoreName,
+            storeAdmins: storeAdmins,
+          },
+        },
+      );
+
+      // done
+      return {
+        successMessage: 'Store updated successfully',
+        statusCode: 200,
+      };
+    }
+  }
+
   async deleteStore(
     requestInfo: DeleteStoreDto,
   ): Promise<SuccessResponseObjectDto | void> {
@@ -86,6 +133,7 @@ export class StoresManagementService {
       // deleting the selected store
       await this.storeModel.deleteOne({ _id: requestInfo.storeId });
 
+      // done
       return {
         successMessage: 'Store deleted successfully',
         statusCode: 200,

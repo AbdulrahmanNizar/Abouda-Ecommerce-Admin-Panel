@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Res,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { CreateStoreDto } from './dto/CreateStoreDto';
 import { GetStoresDto } from './dto/GetStoresDto';
 import { DeleteStoreDto } from './dto/DeleteStoreDto';
+import { UpdateStoreDto } from './dto/UpdateStoreDto';
 
 @Controller('stores-management')
 export class StoresManagementController {
@@ -37,6 +39,16 @@ export class StoresManagementController {
     res
       .status(201)
       .json(await this.storesManagementService.createStore(createStoreDto));
+  }
+
+  @Patch('/updateStore')
+  async updateStore(
+    @Body() updateStoreDto: UpdateStoreDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(await this.storesManagementService.updateStore(updateStoreDto));
   }
 
   @Delete('/deleteStore')
