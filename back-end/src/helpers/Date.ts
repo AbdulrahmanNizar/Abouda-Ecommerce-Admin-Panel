@@ -6,4 +6,4 @@ const hour: number = new Date().getHours();
 const minutes: number = new Date().getMinutes();
 const seconds: number = new Date().getSeconds();
 
-export const todayDate: string = `${year}-${month}-${today}--${hour}-${minutes}-${seconds}`;
+export const todayDate: string = `${year}-${month}-${today}/${hour}-${minutes}-${seconds}`;

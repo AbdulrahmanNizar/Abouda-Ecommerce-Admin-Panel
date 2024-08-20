@@ -193,25 +193,46 @@ const newStoreAdmins = ref<string>("");
 const createNewStore = async (): Promise<void> => {
   if (newStoreName.value != "" && newStoreAdmins.value != "") {
     const newStoreAdminsInArr: string[] = newStoreAdmins.value.split(",");
-    const requestOptions: any = {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        storeName: newStoreName.value,
-        storeAdmins: newStoreAdminsInArr,
-      }),
-    };
+    const newStoreAdminsIdInArr: string[] = [];
 
-    const response = await fetch(
-      "http://192.168.0.46:3000/stores-management/createStore",
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
+    for (let i = 0; i < newStoreAdminsInArr.length; i++) {
+      try {
+        const response = await fetch(
+          `http://192.168.0.46:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          newStoreAdminsIdInArr.push(data.data.userId);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    try {
+      const requestOptions: any = {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          storeName: newStoreName.value,
+          storeAdmins: newStoreAdminsIdInArr,
+        }),
+      };
+
+      const response = await fetch(
+        "http://192.168.0.46:3000/stores-management/createStore",
+        requestOptions
+      );
+      const data = await response.json();
+      if (data.statusCode >= 200 && data.statusCode < 300) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 10);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 };
