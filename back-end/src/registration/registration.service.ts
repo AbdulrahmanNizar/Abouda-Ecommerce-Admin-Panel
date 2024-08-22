@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto as SignUpUserDto } from './dto/SignUpUserDto';
 import { LoginUserDto } from './dto/LoginUserDto';
 import { ValidateUserToken } from './dto/ValidateUserToken';
+import { LogoutUserDto } from './dto/LogoutUserDto';
 
 @Injectable()
 export class RegistrationService {
@@ -36,7 +37,7 @@ export class RegistrationService {
         username: requestInfo.username,
         email: requestInfo.email,
         password: hashedPassword,
-        online: true,
+        logged: true,
       });
       await newUser.save();
 
@@ -68,6 +69,12 @@ export class RegistrationService {
         // generating new jwt token for the user
         const jwtToken = this.jwtService.sign({ id: userExists[0]._id });
 
+        // updating the database
+        await this.userModel.updateOne(
+          { _id: userExists[0]._id },
+          { $set: { logged: true } },
+        );
+
         // done
         return {
           successMessage: 'Logged in successfully',
@@ -79,6 +86,27 @@ export class RegistrationService {
       }
     } else {
       throw new HttpException('Wrong email or password', 400);
+    }
+  }
+
+  async logout(
+    requestInfo: LogoutUserDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      // updating the user logging details in the database
+      await this.userModel.updateOne(
+        { _id: requestInfo.userId },
+        { $set: { logged: false } },
+      );
+
+      // done
+      return {
+        successMessage: 'Logged out successfully',
+        statusCode: 200,
+      };
+    } catch (err) {
+      // logging an error if there was
+      console.log(err);
     }
   }
 

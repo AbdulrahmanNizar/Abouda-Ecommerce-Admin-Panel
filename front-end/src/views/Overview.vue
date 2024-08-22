@@ -85,19 +85,18 @@
                 >Settings</router-link
               >
             </li>
-            <li class="nav-item">
+            <li class="nav-item me-2">
               <router-link class="nav-link active" :to="{ path: '/account' }"
                 >Account</router-link
               >
             </li>
+            <li class="nav-item">
+              <button class="btn btn-outline-danger" @click="logout">
+                Logout
+              </button>
+            </li>
           </ul>
         </div>
-      </div>
-
-      <div
-        class="w-25 d-flex flex-row justify-content-center align-items-center"
-      >
-        <button class="btn btn-danger" @click="logout">Logout</button>
       </div>
     </nav>
 
@@ -192,7 +191,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const userId = ref<string | null>(localStorage.getItem("UserId"));
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 
@@ -243,5 +245,28 @@ const createNewStore = async (): Promise<void> => {
   }
 };
 
-const logout = async (): Promise<void> => {};
+const logout = async (): Promise<void> => {
+  try {
+    const requestOptions: any = {
+      method: "PATCH",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+    };
+
+    const response = await fetch(
+      `http://192.168.1.241:3000/registration/logout/${userId.value}`,
+      requestOptions
+    );
+    const data = await response.json();
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      localStorage.clear();
+      router.push({ path: "/login" });
+      setTimeout(() => {
+        window.location.reload();
+      }, 10);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 </script>

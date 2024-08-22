@@ -4,7 +4,7 @@ export const registrationSchema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  online: { type: Boolean, required: true },
+  logged: { type: Boolean, required: true },
 });
 
 export interface Registration {
@@ -12,5 +12,5 @@ export interface Registration {
   username: string;
   email: string;
   password: string;
-  online: boolean;
+  logged: boolean;
 }

@@ -8,38 +8,41 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 const JwtToken = ref<string | null>(localStorage.getItem("JwtToken"));
 
 onMounted(async (): Promise<void> => {
-  if (JwtToken.value != "") {
-    const requestOptions: any = {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: JwtToken.value,
-      }),
-    };
+  if (route.path != "/login" && route.path != "/signup") {
+    if (JwtToken.value != "") {
+      const requestOptions: any = {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: JwtToken.value,
+        }),
+      };
 
-    const response = await fetch(
-      "http://192.168.1.241:3000/registration/validateTheAuthToken",
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.name == "JsonWebTokenError") {
+      const response = await fetch(
+        "http://192.168.1.241:3000/registration/validateTheAuthToken",
+        requestOptions
+      );
+      const data = await response.json();
+      if (data.name == "JsonWebTokenError") {
+        localStorage.removeItem("UserId");
+        localStorage.removeItem("JwtToken");
+        router.push({ path: "/login" });
+      } else {
+        router.push({ path: "/" });
+      }
+    } else {
       localStorage.removeItem("UserId");
       localStorage.removeItem("JwtToken");
       router.push({ path: "/login" });
-    } else {
-      router.push({ path: "/" });
     }
-  } else {
-    localStorage.removeItem("UserId");
-    localStorage.removeItem("JwtToken");
-    router.push({ path: "/login" });
   }
 });
 </script>
