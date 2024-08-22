@@ -93,6 +93,12 @@
           </ul>
         </div>
       </div>
+
+      <div
+        class="w-25 d-flex flex-row justify-content-center align-items-center"
+      >
+        <button class="btn btn-danger" @click="logout">Logout</button>
+      </div>
     </nav>
 
     <div
@@ -198,7 +204,7 @@ const createNewStore = async (): Promise<void> => {
     for (let i = 0; i < newStoreAdminsInArr.length; i++) {
       try {
         const response = await fetch(
-          `http://192.168.0.46:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
+          `http://192.168.1.241:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
         );
         const data = await response.json();
 
@@ -222,7 +228,7 @@ const createNewStore = async (): Promise<void> => {
       };
 
       const response = await fetch(
-        "http://192.168.0.46:3000/stores-management/createStore",
+        "http://192.168.1.241:3000/stores-management/createStore",
         requestOptions
       );
       const data = await response.json();
@@ -236,4 +242,6 @@ const createNewStore = async (): Promise<void> => {
     }
   }
 };
+
+const logout = async (): Promise<void> => {};
 </script>
