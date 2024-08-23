@@ -11,13 +11,32 @@
             aria-expanded="false"
           >
             <i class="bi bi-shop"></i>
+            {{ currentStoreName }}
           </button>
 
           <ul class="dropdown-menu">
-            <li>
-              <a href="#" class="dropdown-item">
-                <i class="bi bi-shop"></i> Abouda Store</a
+            <li
+              v-for="store in yourStores"
+              class="d-flex flex-row justify-content-center align-items-center"
+            >
+              <a
+                href="#"
+                class="dropdown-item p-2"
+                @click="manageThisStore(store._id, store.storeName)"
               >
+                <i class="bi bi-shop"></i> {{ store.storeName }}
+                <div class="btn-group ms-2">
+                  <button class="btn btn-dark btn-sm">
+                    <i style="cursor: pointer" class="bi bi-pencil-square"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm"
+                    @click="deleteStore(store._id)"
+                  >
+                    <i style="cursor: pointer" class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </a>
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li>
@@ -105,9 +124,9 @@
     >
       <h3 class="fw-bold ms-5 text-start">Statistics</h3>
       <p class="text-muted text-start ms-5">Overview of your store</p>
-
-      <hr class="w-100 text-black" />
     </div>
+
+    <hr class="w-100 text-black" />
 
     <div
       class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
@@ -124,6 +143,18 @@
         <h4>Products In Stoke</h4>
         <h2 class="fw-bold">0</h2>
       </div>
+    </div>
+
+    <hr class="w-100 text-black mt-3" />
+
+    <div class="w-100 text-center">
+      <h3 class="fw-bold">Our Api's</h3>
+    </div>
+
+    <hr class="w-100 text-black" />
+
+    <div class="w-100 p-3">
+      <api-cards-for-stores />
     </div>
 
     <div
@@ -192,11 +223,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import ApiCardsForStores from "@/components/ApiCardsForStores.vue";
 
 const router = useRouter();
 const userId = ref<string | null>(localStorage.getItem("UserId"));
+const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
+const yourStores = ref<any>([]);
 
 const createNewStore = async (): Promise<void> => {
   if (newStoreName.value != "" && newStoreAdmins.value != "") {
@@ -269,4 +303,62 @@ const logout = async (): Promise<void> => {
     console.log(err);
   }
 };
+
+const getYourStores = async (): Promise<void> => {
+  try {
+    const response = await fetch(
+      `http://192.168.1.241:3000/stores-management/getStores/${userId.value}`
+    );
+    const data = await response.json();
+
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      for (let i = 0; i < data.data.length; i++) {
+        yourStores.value.push(data.data[i]);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deleteStore = async (storeId: string): Promise<void> => {
+  try {
+    const requestOptions: any = {
+      method: "DELETE",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        storeId: storeId,
+      }),
+    };
+
+    const response = await fetch(
+      "http://192.168.1.241:3000/stores-management/deleteStore",
+      requestOptions
+    );
+    const data = await response.json();
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      localStorage.removeItem("StoreName");
+      localStorage.removeItem("StoreId");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 10);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const manageThisStore = (storeId: string, storeName: string) => {
+  currentStoreName.value = storeName;
+  localStorage.setItem("StoreName", storeName);
+  localStorage.setItem("StoreId", storeId);
+
+  setTimeout(() => {
+    window.location.reload();
+  }, 10);
+};
+
+getYourStores();
 </script>
