@@ -14,6 +14,7 @@ import { CreateStoreDto } from './dto/CreateStoreDto';
 import { GetStoresDto } from './dto/GetStoresDto';
 import { DeleteStoreDto } from './dto/DeleteStoreDto';
 import { UpdateStoreDto } from './dto/UpdateStoreDto';
+import { GetStoreDetailsDto } from './dto/GetStoreDetailsDto';
 
 @Controller('stores-management')
 export class StoresManagementController {
@@ -29,6 +30,18 @@ export class StoresManagementController {
     res
       .status(200)
       .json(await this.storesManagementService.getStores(getStoresDto));
+  }
+
+  @Get('/getStoreDetails/:storeId')
+  async getStoreDetails(
+    @Param() getStoreDetailsDto: GetStoreDetailsDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(
+        await this.storesManagementService.getStoreDetails(getStoreDetailsDto),
+      );
   }
 
   @Post('/createStore')

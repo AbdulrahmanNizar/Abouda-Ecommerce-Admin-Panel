@@ -8,6 +8,7 @@ import { GetStoresDto } from './dto/GetStoresDto';
 import { todayDate } from 'src/helpers/Date';
 import { DeleteStoreDto } from './dto/DeleteStoreDto';
 import { UpdateStoreDto } from './dto/UpdateStoreDto';
+import { GetStoreDetailsDto } from './dto/GetStoreDetailsDto';
 
 @Injectable()
 export class StoresManagementService {
@@ -42,6 +43,27 @@ export class StoresManagementService {
         data: userStores,
       };
     } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async getStoreDetails(
+    requestInfo: GetStoreDetailsDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      // getting the store details from the database by store id
+      const storeInDB = await this.storeModel.find({
+        _id: requestInfo.storeId,
+      });
+
+      // done
+      return {
+        successMessage: 'Got the store details successfully',
+        statusCode: 200,
+        data: storeInDB,
+      };
+    } catch (err) {
+      // throw an error if there was
       console.log(err);
     }
   }
