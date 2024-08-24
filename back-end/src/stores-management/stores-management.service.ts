@@ -62,6 +62,9 @@ export class StoresManagementService {
         const newStore = new this.storeModel({
           storeName: requestInfo.storeName,
           storeAdmins: requestInfo.storeAdmins,
+          storeProducts: [],
+          storeSales: 0,
+          storeTotalRevenue: 0,
           createdAt: todayDate,
         });
         // saving the new store in the database
