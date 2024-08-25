@@ -35,8 +35,6 @@ onMounted(async (): Promise<void> => {
         localStorage.removeItem("UserId");
         localStorage.removeItem("JwtToken");
         router.push({ path: "/login" });
-      } else {
-        router.push({ path: "/" });
       }
     } else {
       localStorage.removeItem("UserId");

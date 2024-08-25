@@ -30,29 +30,39 @@
               />
             </div>
             <li><hr class="dropdown-divider" /></li>
-            <li
-              v-for="store in yourStores"
-              class="d-flex flex-row justify-content-center align-items-center"
+            <transition-group
+              :css="false"
+              @before-enter="onBeforeEnter"
+              @enter="onEnter"
+              @leave="onLeave"
             >
-              <a
-                href="#"
-                class="dropdown-item p-2"
-                @click="manageThisStore(store._id, store.storeName)"
+              <li
+                v-for="store in yourComputedStores"
+                class="d-flex flex-row justify-content-center align-items-center"
               >
-                <i class="bi bi-shop"></i> {{ store.storeName }}
-                <div class="btn-group ms-2">
-                  <button class="btn btn-dark btn-sm">
-                    <i style="cursor: pointer" class="bi bi-pencil-square"></i>
-                  </button>
-                  <button
-                    class="btn btn-danger btn-sm"
-                    @click="deleteStore(store._id)"
-                  >
-                    <i style="cursor: pointer" class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </a>
-            </li>
+                <a
+                  href="#"
+                  class="dropdown-item p-2"
+                  @click="manageThisStore(store._id, store.storeName)"
+                >
+                  <i class="bi bi-shop"></i> {{ store.storeName }}
+                  <div class="btn-group ms-2">
+                    <button class="btn btn-dark btn-sm">
+                      <i
+                        style="cursor: pointer"
+                        class="bi bi-pencil-square"
+                      ></i>
+                    </button>
+                    <button
+                      class="btn btn-danger btn-sm"
+                      @click="deleteStore(store._id)"
+                    >
+                      <i style="cursor: pointer" class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </a>
+              </li>
+            </transition-group>
             <li><hr class="dropdown-divider" /></li>
             <li>
               <a
@@ -80,12 +90,12 @@
         <div class="collapse navbar-collapse ms-5" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/' }"
+              <router-link class="nav-link" :to="{ path: '/' }"
                 >Overview</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ path: '/categories' }"
+              <router-link class="nav-link active" :to="{ path: '/categories' }"
                 >Categories</router-link
               >
             </li>
@@ -130,37 +140,53 @@
     </nav>
 
     <div
-      class="d-flex flex-column justify-content-start align-items-start mt-3 p-3 w-100"
+      class="w-100 d-flex flex-row justify-content-around align-items-center mt-3 p-3"
     >
-      <h3 class="fw-bold ms-5 text-start">Statistics</h3>
-      <p class="text-start ms-5">Overview of your store</p>
+      <div
+        class="w-100 d-flex flex-column justify-content-start align-items-start"
+      >
+        <h3 class="fw-bold ms-5 text-start">Categories</h3>
+        <p class="text-start ms-5">Manage categories of your store</p>
+      </div>
+      <div
+        class="d-flex flex-row justify-content-center align-items-center me-4"
+        style="width: 10%"
+      >
+        <button class="btn btn-dark text-center">
+          <i class="bi bi-plus"></i> Add New
+        </button>
+      </div>
     </div>
 
     <hr class="w-100 text-black" />
 
     <div
-      class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
+      class="w-100 d-flex flex-column justify-content-start align-items-start"
     >
       <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
+        class="d-flex flex-column justify-content-start align-items-start p-3 w-100"
       >
-        <h4>Total Revenue</h4>
-        <h2 class="fw-bold">${{ storeDetail.storeTotalRevenue }}</h2>
-      </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Sales</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeSales }}</h2>
-      </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Products In Stoke</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeProducts.length }}</h2>
+        <input
+          type="text"
+          placeholder="Search"
+          class="form-control w-25 ms-5 mb-3"
+          v-model="searchCategory"
+        />
+
+        <table class="table w-100 mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">test</th>
+              <td>25-8-2024</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -314,12 +340,12 @@
         <div class="collapse navbar-collapse ms-5" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/' }"
+              <router-link class="nav-link" :to="{ path: '/' }"
                 >Overview</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ path: '/categories' }"
+              <router-link class="nav-link active" :to="{ path: '/categories' }"
                 >Categories</router-link
               >
             </li>
@@ -362,41 +388,6 @@
         </div>
       </div>
     </nav>
-
-    <div
-      class="d-flex flex-column justify-content-start align-items-start mt-3 p-3 w-100"
-    >
-      <h3 class="fw-bold ms-5 text-start">Statistics</h3>
-      <p class="text-start ms-5">Overview of your store</p>
-    </div>
-
-    <hr class="w-100 text-white" />
-
-    <div
-      class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
-    >
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Total Revenue</h4>
-        <h2 class="fw-bold">${{ storeDetail.storeTotalRevenue }}</h2>
-      </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Sales</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeSales }}</h2>
-      </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Products In Stoke</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeProducts.length }}</h2>
-      </div>
-    </div>
 
     <div
       class="modal fade"
@@ -475,6 +466,7 @@ const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
+const searchCategory = ref<string>("");
 const yourStores = ref<any>([]);
 const currentStoreInformation = ref<any>([]);
 const systemMood = ref<string | null>(localStorage.getItem("SystemMood"));

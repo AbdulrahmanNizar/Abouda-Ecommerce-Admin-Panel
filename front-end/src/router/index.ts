@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SignUp from "@/views/SignUp.vue";
 import Login from "@/views/Login.vue";
 import Overview from "@/views/Overview.vue";
+import Categories from "@/views/Categories.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,9 +16,17 @@ const routes: Array<RouteRecordRaw> = [
     component: Login,
   },
   {
-    name: "Home",
+    name: "Overview",
     path: "/",
     component: Overview,
+    meta: {
+      needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "Categories",
+    path: "/categories",
+    component: Categories,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },
