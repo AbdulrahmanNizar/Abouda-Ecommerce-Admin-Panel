@@ -43,7 +43,7 @@ export class StoresManagementService {
         data: userStores,
       };
     } catch (err) {
-      console.log(err);
+      throw new HttpException('Something went wrong', 400);
     }
   }
 
@@ -56,15 +56,19 @@ export class StoresManagementService {
         _id: requestInfo.storeId,
       });
 
-      // done
-      return {
-        successMessage: 'Got the store details successfully',
-        statusCode: 200,
-        data: storeInDB,
-      };
+      if (storeInDB.length > 0) {
+        // done
+        return {
+          successMessage: 'Got the store details successfully',
+          statusCode: 200,
+          data: storeInDB,
+        };
+      } else {
+        throw new HttpException('The store does not exist', 404);
+      }
     } catch (err) {
       // throw an error if there was
-      console.log(err);
+      throw new HttpException('Something went wrong', 400);
     }
   }
 
@@ -85,6 +89,7 @@ export class StoresManagementService {
           storeName: requestInfo.storeName,
           storeAdmins: requestInfo.storeAdmins,
           storeProducts: [],
+          storeCategories: [],
           storeSales: 0,
           storeTotalRevenue: 0,
           createdAt: todayDate,
@@ -100,7 +105,7 @@ export class StoresManagementService {
         };
       } catch (err) {
         // logging an error if there was
-        console.log(err);
+        throw new HttpException('Something went wrong', 400);
       }
     }
   }
@@ -165,7 +170,7 @@ export class StoresManagementService {
       };
     } catch (err) {
       // logging an error if there was
-      console.log(err);
+      throw new HttpException('Something went wrong', 400);
     }
   }
 }
