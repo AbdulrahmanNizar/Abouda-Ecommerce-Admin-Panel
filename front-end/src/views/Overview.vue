@@ -341,7 +341,7 @@ const getYourStores = async (): Promise<void> => {
 };
 
 const getYourStoreInformation = async (): Promise<void> => {
-  if (currentStoreName.value != "") {
+  if (currentStoreName.value != "" && currentStoreId.value != "") {
     try {
       const response = await fetch(
         `http://192.168.1.241:3000/stores-management/getStoreDetails/${currentStoreId.value}`
