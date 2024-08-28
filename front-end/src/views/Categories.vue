@@ -142,8 +142,8 @@
       <div
         class="w-100 d-flex flex-column justify-content-start align-items-start"
       >
-        <h3 class="fw-bold ms-5 text-start">Categories</h3>
-        <p class="text-start ms-5">Manage categories of your store</p>
+        <h3 class="fw-bold ms-2 text-start">Categories</h3>
+        <p class="text-start ms-2">Manage categories of your store</p>
       </div>
       <div
         class="d-flex flex-row justify-content-center align-items-center me-4"
@@ -174,13 +174,15 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
+              <th scope="col">Time</th>
               <th scope="col">Date</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">test</th>
-              <td>25-8-2024</td>
+            <tr v-for="category in currentStoreCategories">
+              <th scope="row">{{ category.categoryName }}</th>
+              <td>{{ category.createdAtTime }}</td>
+              <td>{{ category.createdAtDate }}</td>
             </tr>
           </tbody>
         </table>
@@ -261,6 +263,7 @@ const searchStore = ref<string>("");
 const searchCategory = ref<string>("");
 const yourStores = ref<any>([]);
 const currentStoreInformation = ref<any>([]);
+const currentStoreCategories = ref<any>([]);
 
 const yourComputedStores = computed(() => {
   return yourStores.value.filter((store: any) =>
@@ -413,6 +416,21 @@ const manageThisStore = (storeId: string, storeName: string) => {
   }, 10);
 };
 
+const getYourStoreCategories = async (): Promise<void> => {
+  try {
+    const response = await fetch(
+      `http://192.168.1.241:3000/categories/getCategories/${currentStoreId.value}`
+    );
+    const data = await response.json();
+
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      currentStoreCategories.value = data.data;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 function onBeforeEnter(el: any) {
   el.style.opacity = 0;
   el.style.height = 0;
@@ -438,4 +456,5 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
+getYourStoreCategories();
 </script>
