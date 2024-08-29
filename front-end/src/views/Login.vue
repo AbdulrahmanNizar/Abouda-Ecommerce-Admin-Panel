@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { required, email, minLength } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
@@ -69,6 +69,14 @@ import NavBar from "@/components/NavBar.vue";
 const router = useRouter();
 const errorWrongEmailOrPassword = ref<string>("");
 const showErrorWrongEmailOrPassword = ref<boolean>(false);
+
+onMounted(() => {
+  const JwtToken = localStorage.getItem("JwtToken");
+
+  if (JwtToken) {
+    router.push({ path: "/" });
+  }
+});
 
 const formData = reactive({
   email: "",

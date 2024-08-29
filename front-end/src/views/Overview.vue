@@ -233,8 +233,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import gsap from "gsap";
 
+const store = useStore();
 const router = useRouter();
 const userId = ref<string | null>(localStorage.getItem("UserId"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
@@ -252,75 +254,14 @@ const yourComputedStores = computed(() => {
 });
 
 const createNewStore = async (): Promise<void> => {
-  if (newStoreName.value != "" && newStoreAdmins.value != "") {
-    const newStoreAdminsInArr: string[] = newStoreAdmins.value.split(",");
-    const newStoreAdminsIdInArr: string[] = [];
-
-    for (let i = 0; i < newStoreAdminsInArr.length; i++) {
-      try {
-        const response = await fetch(
-          `http://192.168.1.241:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
-        );
-        const data = await response.json();
-
-        if (data.statusCode >= 200 && data.statusCode < 300) {
-          newStoreAdminsIdInArr.push(data.data.userId);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    try {
-      const requestOptions: any = {
-        method: "POST",
-        mode: "cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          storeName: newStoreName.value,
-          storeAdmins: newStoreAdminsIdInArr,
-        }),
-      };
-
-      const response = await fetch(
-        "http://192.168.1.241:3000/stores-management/createStore",
-        requestOptions
-      );
-      const data = await response.json();
-      if (data.statusCode >= 200 && data.statusCode < 300) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 10);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  store.dispatch("createNewStore", {
+    newStoreName: newStoreName.value,
+    newStoreAdmins: newStoreAdmins.value,
+  });
 };
 
 const logout = async (): Promise<void> => {
-  try {
-    const requestOptions: any = {
-      method: "PATCH",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-    };
-
-    const response = await fetch(
-      `http://192.168.1.241:3000/registration/logout/${userId.value}`,
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      localStorage.clear();
-      router.push({ path: "/login" });
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  store.dispatch("logout");
 };
 
 const getYourStores = async (): Promise<void> => {

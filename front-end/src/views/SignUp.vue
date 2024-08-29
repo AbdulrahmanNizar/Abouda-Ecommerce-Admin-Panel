@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { email, required, minLength, sameAs } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
@@ -96,6 +96,14 @@ import NavBar from "@/components/NavBar.vue";
 const router = useRouter();
 const errorMessageForAlreadyExistUsername = ref<string>("");
 const showErrorMessageForAlreadyExsitUsername = ref<boolean>(false);
+
+onMounted(() => {
+  const JwtToken = localStorage.getItem("JwtToken");
+
+  if (JwtToken) {
+    router.push({ path: "/" });
+  }
+});
 
 const formData = reactive({
   username: "",
