@@ -6,12 +6,14 @@ import {
   UseGuards,
   Get,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { CreateCategoryDto } from './dto/CreateCategoryDto';
 import { AdminGuard } from './guards/admin/admin.guard';
 import { GetCategoriesDto } from './dto/GetCategoriesDto';
+import { DeleteCategoryDto } from './dto/DeleteCategoryDto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -36,5 +38,16 @@ export class CategoriesController {
     res
       .status(201)
       .json(await this.categoriesService.createCategory(createCategoryDto));
+  }
+
+  @Delete('/deleteCategory/:categoryId')
+  @UseGuards(AdminGuard)
+  async deleteCategory(
+    @Param() deleteCategoryDto: DeleteCategoryDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(await this.categoriesService.deleteCategory(deleteCategoryDto));
   }
 }

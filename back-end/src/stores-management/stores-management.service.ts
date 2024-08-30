@@ -43,7 +43,7 @@ export class StoresManagementService {
         data: userStores,
       };
     } catch (err) {
-      throw new HttpException('Something went wrong', 400);
+      throw new HttpException(err, err.status);
     }
   }
 
@@ -68,7 +68,7 @@ export class StoresManagementService {
       }
     } catch (err) {
       // throw an error if there was
-      throw new HttpException('Something went wrong', 400);
+      throw new HttpException(err, err.status);
     }
   }
 
@@ -88,8 +88,6 @@ export class StoresManagementService {
         const newStore = new this.storeModel({
           storeName: requestInfo.storeName,
           storeAdmins: requestInfo.storeAdmins,
-          storeProducts: [],
-          storeCategories: [],
           storeSales: 0,
           storeTotalRevenue: 0,
           createdAt: todayDate,
@@ -105,7 +103,7 @@ export class StoresManagementService {
         };
       } catch (err) {
         // logging an error if there was
-        throw new HttpException('Something went wrong', 400);
+        throw new HttpException(err, err.status);
       }
     }
   }
@@ -170,7 +168,7 @@ export class StoresManagementService {
       };
     } catch (err) {
       // logging an error if there was
-      throw new HttpException('Something went wrong', 400);
+      throw new HttpException(err, err.status);
     }
   }
 }
