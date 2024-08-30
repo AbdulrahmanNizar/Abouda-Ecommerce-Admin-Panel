@@ -15,12 +15,11 @@
         <div
           class="w-75 d-flex flex-column justify-content-center align-items-start"
         >
-          <transition name="fadeError">
-            <div
-              class="alert alert-danger w-100 text-center"
-              role="alert"
-              v-show="showErrorMessageForAlreadyExsitUsername"
-            >
+          <transition
+            name="fadeError"
+            v-show="showErrorMessageForAlreadyExsitUsername"
+          >
+            <div class="alert alert-danger w-100 text-center" role="alert">
               {{ errorMessageForAlreadyExistUsername }}
             </div>
           </transition>

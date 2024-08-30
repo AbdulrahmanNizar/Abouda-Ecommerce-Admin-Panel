@@ -52,7 +52,7 @@
                     </button>
                     <button
                       class="btn btn-danger btn-sm"
-                      @click="deleteStore(store._id)"
+                      @click="deleteStore()"
                     >
                       <i style="cursor: pointer" class="bi bi-trash"></i>
                     </button>
@@ -143,7 +143,7 @@
       <p class="text-start ms-5">Overview of your store</p>
     </div>
 
-    <hr class="w-100 text-black" />
+    <hr class="w-100" />
 
     <div
       class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
@@ -204,7 +204,7 @@
               v-model="newStoreName"
               placeholder="Enter A Name For The New Store"
             />
-            <hr class="w-100 text-black" />
+            <hr class="w-100" />
             <label for="#newStoreAdminsInt" class="form-label"
               >New Store Admins</label
             >
@@ -231,7 +231,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import gsap from "gsap";
@@ -244,8 +244,22 @@ const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
-const yourStores = ref<any>([]);
-const currentStoreInformation = ref<any>([]);
+const yourStores = computed(() => {
+  return store.state.yourStores;
+});
+const currentStoreInformation = computed(() => {
+  return store.state.currentStoreInformation;
+});
+
+onMounted(() => {
+  for (let i = 0; i < yourStores.value.length; i++) {
+    for (let j = 0; j < yourStores.value.length; j++) {
+      if (yourStores.value[i] == yourStores.value[j]) {
+        window.location.reload();
+      }
+    }
+  }
+});
 
 const yourComputedStores = computed(() => {
   return yourStores.value.filter((store: any) =>
@@ -260,81 +274,26 @@ const createNewStore = async (): Promise<void> => {
   });
 };
 
-const logout = async (): Promise<void> => {
-  store.dispatch("logout");
-};
-
 const getYourStores = async (): Promise<void> => {
-  try {
-    const response = await fetch(
-      `http://192.168.1.241:3000/stores-management/getStores/${userId.value}`
-    );
-    const data = await response.json();
-
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      for (let i = 0; i < data.data.length; i++) {
-        yourStores.value.push(data.data[i]);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  store.dispatch("getYourStores");
 };
 
 const getYourStoreInformation = async (): Promise<void> => {
   if (currentStoreName.value != "" && currentStoreId.value != "") {
-    try {
-      const response = await fetch(
-        `http://192.168.1.241:3000/stores-management/getStoreDetails/${currentStoreId.value}`
-      );
-      const data = await response.json();
-
-      if (data.statusCode >= 200 && data.statusCode < 300) {
-        currentStoreInformation.value = data.data;
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    store.dispatch("getYourStoreInformation");
   }
 };
 
-const deleteStore = async (storeId: string): Promise<void> => {
-  try {
-    const requestOptions: any = {
-      method: "DELETE",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        storeId: storeId,
-      }),
-    };
-
-    const response = await fetch(
-      "http://192.168.1.241:3000/stores-management/deleteStore",
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      localStorage.removeItem("StoreName");
-      localStorage.removeItem("StoreId");
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+const deleteStore = async (): Promise<void> => {
+  store.dispatch("deleteStore");
 };
 
 const manageThisStore = (storeId: string, storeName: string) => {
-  currentStoreName.value = storeName;
-  localStorage.setItem("StoreName", storeName);
-  localStorage.setItem("StoreId", storeId);
+  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
+};
 
-  setTimeout(() => {
-    window.location.reload();
-  }, 10);
+const logout = async (): Promise<void> => {
+  store.dispatch("logout");
 };
 
 function onBeforeEnter(el: any) {

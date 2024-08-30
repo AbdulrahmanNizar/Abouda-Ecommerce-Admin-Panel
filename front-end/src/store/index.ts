@@ -6,16 +6,25 @@ const store = createStore({
     JwtToken: localStorage.getItem("JwtToken"),
     currentStoreName: localStorage.getItem("StoreName"),
     currentStoreId: localStorage.getItem("StoreId"),
+    currentStoreInformation: <any>[],
+    yourStores: <any>[],
+    currentStoreCategories: <any>[],
     userId: localStorage.getItem("UserId"),
   },
   getters: {},
-  mutations: {},
+  mutations: {
+    manageThisStore(state, { storeName, storeId }): void {
+      localStorage.setItem("StoreName", storeName);
+      localStorage.setItem("StoreId", storeId);
+
+      window.location.reload();
+    },
+  },
   actions: {
     async createNewStore(
       context,
       { newStoreName, newStoreAdmins }
     ): Promise<void> {
-      console.log(newStoreName, newStoreAdmins);
       if (newStoreName != "" && newStoreAdmins != "") {
         const newStoreAdminsInArr: string[] = newStoreAdmins.split(",");
         const newStoreAdminsIdInArr: string[] = [];
@@ -57,6 +66,130 @@ const store = createStore({
         } catch (err) {
           console.log(err);
         }
+      }
+    },
+
+    async getYourStores(context, payload): Promise<void> {
+      try {
+        const response = await fetch(
+          `http://192.168.1.241:3000/stores-management/getStores/${this.state.userId}`
+        );
+        const data: any = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          for (let i = 0; i < data.data.length; i++) {
+            if (!this.state.yourStores.includes(data.data[i])) {
+              this.state.yourStores.push(data.data[i]);
+            }
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async getYourStoreInformation(context, payload): Promise<void> {
+      try {
+        const response = await fetch(
+          `http://192.168.1.241:3000/stores-management/getStoreDetails/${this.state.currentStoreId}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          this.state.currentStoreInformation = data.data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async updateStore(
+      context,
+      { newStoreName, newStoreAdmins }
+    ): Promise<void> {
+      try {
+        const requestOptions: any = {
+          method: "PATCH",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            storeId: this.state.currentStoreId,
+            newStoreName: newStoreName,
+            newStoreAdmins: newStoreAdmins,
+          }),
+        };
+
+        const response = await fetch(
+          "http://192.168.1.241:3000/stores-management/updateStore",
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async deleteStore(context, { storeId }): Promise<void> {
+      try {
+        const requestOptions: any = {
+          method: "DELETE",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            storeId: storeId,
+          }),
+        };
+
+        const response = await fetch(
+          "http://192.168.1.241:3000/stores-management/deleteStore",
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          localStorage.removeItem("StoreName");
+          localStorage.removeItem("StoreId");
+
+          window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async getCurrentStoreCategories(context, payload): Promise<void> {
+      try {
+        const response = await fetch(
+          `http://192.168.1.241:3000/categories/getCategories/${this.state.currentStoreId}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          this.state.currentStoreCategories = data.data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async deleteCategory(context, { categoryName }): Promise<void> {
+      try {
+        const requestOptions: any = {
+          method: "DELETE",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await fetch(
+          `http://192.168.1.241:3000/categories/deleteCategory/${categoryName}`,
+          requestOptions
+        );
+        const data = await response.json();
+        console.log(data);
+      } catch (err) {
+        console.log(err);
       }
     },
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100 text-black">
+  <div class="h-auto text-black">
     <nav
       class="navbar navbar-expand-lg d-flex flex-row justify-content-start align-items-start border-bottom"
     >
@@ -43,21 +43,15 @@
                   @click="manageThisStore(store._id, store.storeName)"
                 >
                   <i class="bi bi-shop"></i> {{ store.storeName }}
-                  <div class="btn-group ms-2">
-                    <button class="btn btn-dark btn-sm">
-                      <i
-                        style="cursor: pointer"
-                        class="bi bi-pencil-square"
-                      ></i>
-                    </button>
-                    <button
-                      class="btn btn-danger btn-sm"
-                      @click="deleteStore(store._id)"
-                    >
-                      <i style="cursor: pointer" class="bi bi-trash"></i>
-                    </button>
-                  </div>
                 </a>
+                <div class="me-2">
+                  <button
+                    class="btn btn-danger btn-sm"
+                    @click="deleteStore(store._id)"
+                  >
+                    <i style="cursor: pointer" class="bi bi-trash"></i>
+                  </button>
+                </div>
               </li>
             </transition-group>
             <li><hr class="dropdown-divider" /></li>
@@ -155,7 +149,7 @@
       </div>
     </div>
 
-    <hr class="w-100 text-black" />
+    <hr class="w-100" />
 
     <div
       class="w-100 d-flex flex-column justify-content-start align-items-start"
@@ -165,28 +159,58 @@
       >
         <input
           type="text"
-          placeholder="Search"
-          class="form-control w-25 ms-5 mb-3"
+          placeholder="Search Category"
+          class="form-control w-50 ms-5 mb-3"
           v-model="searchCategory"
         />
 
-        <table class="table w-100 mt-3">
+        <table
+          class="table w-100 mt-3 bg-none rounded"
+          v-if="yourComputedCategories.length > 0"
+        >
           <thead>
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Time</th>
               <th scope="col">Date</th>
+              <th scope="col">Delete</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="category in currentStoreCategories">
-              <th scope="row">{{ category.categoryName }}</th>
-              <td>{{ category.createdAtTime }}</td>
-              <td>{{ category.createdAtDate }}</td>
-            </tr>
+            <transition-group
+              :css="false"
+              @before-enter="onBeforeEnter"
+              @enter="onEnter"
+              @leave="onLeave"
+            >
+              <tr v-for="category in yourComputedCategories">
+                <th scope="row">{{ category.categoryName }}</th>
+                <td>{{ category.createdAtTime }}</td>
+                <td>{{ category.createdAtDate }}</td>
+                <td>
+                  <button
+                    class="btn btn-danger"
+                    @click="deleteCategory(category.categoryName)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </transition-group>
           </tbody>
         </table>
       </div>
+    </div>
+
+    <hr class="w-100" />
+
+    <div
+      class="w-100 d-flex flex-column justify-content-center align-items-center p-3"
+    >
+      <h3 class="text-center">Api Calls</h3>
+      <hr class="w-100" />
+
+      <api-cards-for-categories />
     </div>
 
     <div
@@ -222,7 +246,7 @@
               v-model="newStoreName"
               placeholder="Enter A Name For The New Store"
             />
-            <hr class="w-100 text-black" />
+            <hr class="w-100" />
             <label for="#newStoreAdminsInt" class="form-label"
               >New Store Admins</label
             >
@@ -245,14 +269,74 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="modal fade"
+      id="updateStoreModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel1">
+              Update Store
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <label for="#newStoreNameInt" class="form-label"
+              >New Store Name</label
+            >
+            <input
+              id="newStoreNameInt"
+              class="form-control mt-1"
+              type="text"
+              v-model="updatedStoreName"
+              placeholder="Enter A New Name if you want"
+            />
+            <hr class="w-100" />
+            <label for="#newStoreAdminsInt" class="form-label"
+              >New Store Admins</label
+            >
+            <input
+              id="newStoreAdminsInt"
+              type="text"
+              class="form-control mt-1"
+              placeholder="Add , Between The Names"
+              v-model="updatedStoreAdmins"
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-dark" @click="createNewStore">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import gsap from "gsap";
+import ApiCardsForCategories from "@/components/ApiCardsForCategories.vue";
 
+const store = useStore();
 const router = useRouter();
 const userId = ref<string | null>(localStorage.getItem("UserId"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
@@ -261,9 +345,30 @@ const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
 const searchCategory = ref<string>("");
-const yourStores = ref<any>([]);
-const currentStoreInformation = ref<any>([]);
-const currentStoreCategories = ref<any>([]);
+const updatedStoreName = ref<string>("");
+const updatedStoreAdmins = ref<any>([]);
+const currentStoreCategories = computed(() => {
+  return store.state.currentStoreCategories;
+});
+const yourStores = computed(() => {
+  return store.state.yourStores;
+});
+
+onMounted(() => {
+  for (let i = 0; i < yourStores.value.length; i++) {
+    for (let j = 0; j < yourStores.value.length; j++) {
+      if (yourStores.value[i] == yourStores.value[j]) {
+        window.location.reload();
+      }
+    }
+  }
+});
+
+const yourComputedCategories = computed(() => {
+  return currentStoreCategories.value.filter((category: any) =>
+    category.categoryName.toLowerCase().includes(searchCategory.value)
+  );
+});
 
 const yourComputedStores = computed(() => {
   return yourStores.value.filter((store: any) =>
@@ -272,163 +377,40 @@ const yourComputedStores = computed(() => {
 });
 
 const createNewStore = async (): Promise<void> => {
-  if (newStoreName.value != "" && newStoreAdmins.value != "") {
-    const newStoreAdminsInArr: string[] = newStoreAdmins.value.split(",");
-    const newStoreAdminsIdInArr: string[] = [];
-
-    for (let i = 0; i < newStoreAdminsInArr.length; i++) {
-      try {
-        const response = await fetch(
-          `http://192.168.1.241:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
-        );
-        const data = await response.json();
-
-        if (data.statusCode >= 200 && data.statusCode < 300) {
-          newStoreAdminsIdInArr.push(data.data.userId);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    try {
-      const requestOptions: any = {
-        method: "POST",
-        mode: "cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          storeName: newStoreName.value,
-          storeAdmins: newStoreAdminsIdInArr,
-        }),
-      };
-
-      const response = await fetch(
-        "http://192.168.1.241:3000/stores-management/createStore",
-        requestOptions
-      );
-      const data = await response.json();
-      if (data.statusCode >= 200 && data.statusCode < 300) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 10);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-};
-
-const logout = async (): Promise<void> => {
-  try {
-    const requestOptions: any = {
-      method: "PATCH",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-    };
-
-    const response = await fetch(
-      `http://192.168.1.241:3000/registration/logout/${userId.value}`,
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      localStorage.clear();
-      router.push({ path: "/login" });
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  store.dispatch("createNewStore", {
+    newStoreName: newStoreName.value,
+    newStoreAdmins: newStoreAdmins.value,
+  });
 };
 
 const getYourStores = async (): Promise<void> => {
-  try {
-    const response = await fetch(
-      `http://192.168.1.241:3000/stores-management/getStores/${userId.value}`
-    );
-    const data = await response.json();
-
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      for (let i = 0; i < data.data.length; i++) {
-        yourStores.value.push(data.data[i]);
-      }
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  store.dispatch("getYourStores");
 };
 
 const getYourStoreInformation = async (): Promise<void> => {
-  if (currentStoreName.value != "") {
-    try {
-      const response = await fetch(
-        `http://192.168.1.241:3000/stores-management/getStoreDetails/${currentStoreId.value}`
-      );
-      const data = await response.json();
-
-      if (data.statusCode >= 200 && data.statusCode < 300) {
-        currentStoreInformation.value = data.data;
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  if (currentStoreName.value != "" && currentStoreId.value != "") {
+    store.dispatch("getYourStoreInformation");
   }
 };
 
 const deleteStore = async (storeId: string): Promise<void> => {
-  try {
-    const requestOptions: any = {
-      method: "DELETE",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        storeId: storeId,
-      }),
-    };
-
-    const response = await fetch(
-      "http://192.168.1.241:3000/stores-management/deleteStore",
-      requestOptions
-    );
-    const data = await response.json();
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      localStorage.removeItem("StoreName");
-      localStorage.removeItem("StoreId");
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 10);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+  store.dispatch("deleteStore", { storeId: storeId });
 };
 
 const manageThisStore = (storeId: string, storeName: string) => {
-  currentStoreName.value = storeName;
-  localStorage.setItem("StoreName", storeName);
-  localStorage.setItem("StoreId", storeId);
+  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
+};
 
-  setTimeout(() => {
-    window.location.reload();
-  }, 10);
+const logout = async (): Promise<void> => {
+  store.dispatch("logout");
 };
 
 const getYourStoreCategories = async (): Promise<void> => {
-  try {
-    const response = await fetch(
-      `http://192.168.1.241:3000/categories/getCategories/${currentStoreId.value}`
-    );
-    const data = await response.json();
+  store.dispatch("getCurrentStoreCategories");
+};
 
-    if (data.statusCode >= 200 && data.statusCode < 300) {
-      currentStoreCategories.value = data.data;
-    }
-  } catch (err) {
-    console.log(err);
-  }
+const deleteCategory = async (categoryName: string): Promise<void> => {
+  store.dispatch("deleteCategory", { categoryName: categoryName });
 };
 
 function onBeforeEnter(el: any) {
