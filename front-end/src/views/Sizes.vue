@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100 text-black">
+  <div class="h-auto text-black">
     <nav
       class="navbar navbar-expand-lg d-flex flex-row justify-content-start align-items-start border-bottom"
     >
@@ -136,7 +136,9 @@
       <div
         class="w-100 d-flex flex-column justify-content-start align-items-start"
       >
-        <h3 class="fw-bold ms-2 text-start">Sizes</h3>
+        <h3 class="fw-bold ms-2 text-start">
+          Sizes ({{ yourComputedSizes.length }})
+        </h3>
         <p class="text-start ms-2">Manage sizes of your store</p>
       </div>
       <div
@@ -208,6 +210,8 @@
       <h3>Api Calls</h3>
       <p>Api calls for sizes</p>
       <hr class="w-100" />
+
+      <ApiCardsForSizes />
     </div>
 
     <div
@@ -284,6 +288,7 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
+import ApiCardsForSizes from "@/components/ApiCardsForSizes.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");
@@ -309,7 +314,7 @@ const yourComputedStores = computed(() => {
   );
 });
 
-const yourComputedStoreSizes = computed(() => {
+const yourComputedSizes = computed(() => {
   return currentStoreSizes.value.filter((size: any) =>
     size.sizeName.toLowerCase().includes(searchSize.value)
   );

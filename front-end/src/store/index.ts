@@ -1,4 +1,4 @@
-import { RequestOptionsType } from "types/requestOptionsType";
+import { RequestOptionsType } from "@/types/requestOptionsType";
 import { createStore } from "vuex";
 
 const store = createStore({

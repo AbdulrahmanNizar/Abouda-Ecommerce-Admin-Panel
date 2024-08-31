@@ -136,7 +136,9 @@
       <div
         class="w-100 d-flex flex-column justify-content-start align-items-start"
       >
-        <h3 class="fw-bold ms-2 text-start">Categories</h3>
+        <h3 class="fw-bold ms-2 text-start">
+          Categories ({{ yourComputedCategories.length }})
+        </h3>
         <p class="text-start ms-2">Manage categories of your store</p>
       </div>
       <div
@@ -215,7 +217,7 @@
       <p class="text-center">Api calls for categories</p>
       <hr class="w-100" />
 
-      <api-cards-for-categories />
+      <ApiCardsForCategories />
     </div>
 
     <div
