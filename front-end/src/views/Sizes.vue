@@ -81,7 +81,7 @@
         <div class="collapse navbar-collapse ms-5" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/' }"
+              <router-link class="nav-link" :to="{ path: '/' }"
                 >Overview</router-link
               >
             </li>
@@ -91,7 +91,7 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ path: '/sizes' }"
+              <router-link class="nav-link active" :to="{ path: '/sizes' }"
                 >Sizes</router-link
               >
             </li>
@@ -131,38 +131,83 @@
     </nav>
 
     <div
-      class="d-flex flex-column justify-content-start align-items-start mt-3 p-3 w-100"
+      class="w-100 d-flex flex-row justify-content-around align-items-center mt-3 p-3"
     >
-      <h3 class="fw-bold ms-5 text-start">Statistics</h3>
-      <p class="text-start ms-5">Overview of your store</p>
+      <div
+        class="w-100 d-flex flex-column justify-content-start align-items-start"
+      >
+        <h3 class="fw-bold ms-2 text-start">Sizes</h3>
+        <p class="text-start ms-2">Manage sizes of your store</p>
+      </div>
+      <div
+        class="d-flex flex-row justify-content-center align-items-center me-4"
+        style="width: 10%"
+      >
+        <button
+          class="btn btn-dark text-center"
+          data-bs-toggle="modal"
+          data-bs-target="#createNewCategoryModal"
+        >
+          <i class="bi bi-plus"></i> Add New
+        </button>
+      </div>
     </div>
 
     <hr class="w-100" />
 
     <div
-      class="row mt-2 w-100 d-flex flex-row justify-content-center align-items-center p-2"
+      class="w-100 d-flex flex-column justify-content-start align-items-start"
     >
       <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
+        class="d-flex flex-column justify-content-start align-items-start p-3 w-100"
       >
-        <h4>Total Revenue</h4>
-        <h2 class="fw-bold">${{ storeDetail.storeTotalRevenue }}</h2>
+        <input
+          type="text"
+          placeholder="Search Size"
+          class="form-control w-50 mb-3"
+          v-model="searchSize"
+        />
+
+        <table class="w-100 mt-3 me-3 bg-none table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Time</th>
+              <th scope="col">Date</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <transition-group
+              :css="false"
+              @before-enter="onBeforeEnter"
+              @enter="onEnter"
+              @leave="onLeave"
+            >
+              <tr>
+                <th scope="row"></th>
+                <td></td>
+                <td></td>
+                <td>
+                  <button class="btn btn-danger">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </transition-group>
+          </tbody>
+        </table>
       </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Sales</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeSales }}</h2>
-      </div>
-      <div
-        class="ms-3 mt-2 p-4 border border-secondary rounded col-md-3 col-6"
-        v-for="storeDetail in currentStoreInformation"
-      >
-        <h4>Products In Stoke</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeProducts.length }}</h2>
-      </div>
+    </div>
+
+    <hr class="w-100" />
+
+    <div
+      class="w-100 text-center d-flex flex-column justify-content-center align-items-center p-3"
+    >
+      <h3>Api Calls</h3>
+      <p>Api calls for sizes</p>
+      <hr class="w-100" />
     </div>
 
     <div
@@ -188,6 +233,17 @@
             ></button>
           </div>
           <div class="modal-body">
+            <transition
+              name="fadeError"
+              v-show="showRequiredInputsErrorForStores"
+            >
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ requiredInputsErrorForStores }}
+              </div>
+            </transition>
             <label for="#newStoreNameInt" class="form-label"
               >New Store Name</label
             >
@@ -225,25 +281,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
 
 const store = useStore();
-const router = useRouter();
-const userId = ref<string | null>(localStorage.getItem("UserId"));
-const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
-const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
-const newStoreName = ref<string>("");
-const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
+const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
+const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
+const searchSize = ref<string>("");
+const newStoreName = ref<string>("");
+const newStoreAdmins = ref<any>([]);
+const requiredInputsErrorForStores = ref<string>("");
+const showRequiredInputsErrorForStores = ref<boolean>(false);
+
+const currentStoreSizes = computed(() => {
+  return store.state.currentStoreSizes;
+});
 
 const yourStores = computed(() => {
   return store.state.yourStores;
 });
-const currentStoreInformation = computed(() => {
-  return store.state.currentStoreInformation;
+
+const yourComputedStores = computed(() => {
+  return yourStores.value.filter((store: any) =>
+    store.storeName.toLowerCase().includes(searchStore.value)
+  );
+});
+
+const yourComputedStoreSizes = computed(() => {
+  return currentStoreSizes.value.filter((size: any) =>
+    size.sizeName.toLowerCase().includes(searchSize.value)
+  );
 });
 
 onMounted(() => {
@@ -256,17 +325,8 @@ onMounted(() => {
   }
 });
 
-const yourComputedStores = computed(() => {
-  return yourStores.value.filter((store: any) =>
-    store.storeName.toLowerCase().includes(searchStore.value)
-  );
-});
-
-const createNewStore = async (): Promise<void> => {
-  store.dispatch("createNewStore", {
-    newStoreName: newStoreName.value,
-    newStoreAdmins: newStoreAdmins.value,
-  });
+const manageThisStore = (storeId: string, storeName: string): void => {
+  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
 };
 
 const getYourStores = async (): Promise<void> => {
@@ -274,17 +334,27 @@ const getYourStores = async (): Promise<void> => {
 };
 
 const getYourStoreInformation = async (): Promise<void> => {
-  if (currentStoreName.value != "" && currentStoreId.value != "") {
-    store.dispatch("getYourStoreInformation");
+  store.dispatch("getYourStoreInformation");
+};
+
+const createNewStore = async (): Promise<void> => {
+  if (newStoreName.value != "" && newStoreAdmins.value != "") {
+    store.dispatch("createNewStore", {
+      newStoreName: newStoreName.value,
+      newStoreAdmins: newStoreAdmins.value,
+    });
+  } else {
+    requiredInputsErrorForStores.value = "The inputs are required";
+    showRequiredInputsErrorForStores.value = true;
+
+    setTimeout(() => {
+      showRequiredInputsErrorForStores.value = false;
+    }, 3000);
   }
 };
 
 const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
-};
-
-const manageThisStore = (storeId: string, storeName: string) => {
-  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
 };
 
 const logout = async (): Promise<void> => {

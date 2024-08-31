@@ -1,5 +1,5 @@
+import { RequestOptionsType } from "types/requestOptionsType";
 import { createStore } from "vuex";
-import { useRouter } from "vue-router";
 
 const store = createStore({
   state: {
@@ -8,8 +8,11 @@ const store = createStore({
     currentStoreId: localStorage.getItem("StoreId"),
     currentStoreInformation: <any>[],
     yourStores: <any>[],
+    currentStoreSizes: <any>[],
     currentStoreCategories: <any>[],
     userId: localStorage.getItem("UserId"),
+    errorForCreateNewCategory: <string>"",
+    showErrorForCreateNewCategory: <boolean>false,
   },
   getters: {},
   mutations: {
@@ -45,7 +48,7 @@ const store = createStore({
         }
 
         try {
-          const requestOptions: any = {
+          const requestOptions: RequestOptionsType | any = {
             method: "POST",
             mode: "cors",
             headers: { "Content-Type": "application/json" },
@@ -108,7 +111,7 @@ const store = createStore({
       { newStoreName, newStoreAdmins }
     ): Promise<void> {
       try {
-        const requestOptions: any = {
+        const requestOptions: RequestOptionsType | any = {
           method: "PATCH",
           mode: "cors",
           headers: { "Content-Type": "application/json" },
@@ -134,7 +137,7 @@ const store = createStore({
 
     async deleteStore(context, { storeId }): Promise<void> {
       try {
-        const requestOptions: any = {
+        const requestOptions: RequestOptionsType | any = {
           method: "DELETE",
           mode: "cors",
           headers: { "Content-Type": "application/json" },
@@ -174,20 +177,60 @@ const store = createStore({
       }
     },
 
-    async deleteCategory(context, { categoryName }): Promise<void> {
+    async createNewCategory(context, { newCategoryName }): Promise<void> {
       try {
-        const requestOptions: any = {
-          method: "DELETE",
+        const requestOptions: RequestOptionsType | any = {
+          method: "POST",
           mode: "cors",
           headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: this.state.userId,
+            storeId: this.state.currentStoreId,
+            storeName: this.state.currentStoreName,
+            categoryName: newCategoryName,
+          }),
         };
 
         const response = await fetch(
-          `http://192.168.1.241:3000/categories/deleteCategory/${categoryName}`,
+          "http://192.168.1.241:3000/categories/createCategory",
           requestOptions
         );
         const data = await response.json();
-        console.log(data);
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          window.location.reload();
+        } else {
+          this.state.errorForCreateNewCategory = data.message;
+          this.state.showErrorForCreateNewCategory = true;
+
+          setTimeout(() => {
+            this.state.showErrorForCreateNewCategory = false;
+          }, 3000);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async deleteCategory(context, { categoryId }): Promise<void> {
+      try {
+        const requestOptions: RequestOptionsType | any = {
+          method: "DELETE",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: this.state.userId,
+            storeId: this.state.currentStoreId,
+          }),
+        };
+
+        const response = await fetch(
+          `http://192.168.1.241:3000/categories/deleteCategory/${categoryId}`,
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          window.location.reload();
+        }
       } catch (err) {
         console.log(err);
       }
@@ -195,7 +238,7 @@ const store = createStore({
 
     async logout(context, payload): Promise<void> {
       try {
-        const requestOptions: any = {
+        const requestOptions: RequestOptionsType | any = {
           method: "PATCH",
           mode: "cors",
           headers: { "Content-Type": "application/json" },

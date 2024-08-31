@@ -143,7 +143,11 @@
         class="d-flex flex-row justify-content-center align-items-center me-4"
         style="width: 10%"
       >
-        <button class="btn btn-dark text-center">
+        <button
+          class="btn btn-dark text-center"
+          data-bs-toggle="modal"
+          data-bs-target="#createNewCategoryModal"
+        >
           <i class="bi bi-plus"></i> Add New
         </button>
       </div>
@@ -160,12 +164,12 @@
         <input
           type="text"
           placeholder="Search Category"
-          class="form-control w-50 ms-5 mb-3"
+          class="form-control w-50 mb-3"
           v-model="searchCategory"
         />
 
         <table
-          class="table w-100 mt-3 bg-none rounded"
+          class="w-100 mt-3 me-3 bg-none table"
           v-if="yourComputedCategories.length > 0"
         >
           <thead>
@@ -190,7 +194,7 @@
                 <td>
                   <button
                     class="btn btn-danger"
-                    @click="deleteCategory(category.categoryName)"
+                    @click="deleteCategory(category._id)"
                   >
                     <i class="bi bi-trash"></i>
                   </button>
@@ -208,6 +212,7 @@
       class="w-100 d-flex flex-column justify-content-center align-items-center p-3"
     >
       <h3 class="text-center">Api Calls</h3>
+      <p class="text-center">Api calls for categories</p>
       <hr class="w-100" />
 
       <api-cards-for-categories />
@@ -236,6 +241,17 @@
             ></button>
           </div>
           <div class="modal-body">
+            <transition
+              name="fadeError"
+              v-show="showRequiredInputsErrorForStores"
+            >
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ requiredInputsErrorForStores }}
+              </div>
+            </transition>
             <label for="#newStoreNameInt" class="form-label"
               >New Store Name</label
             >
@@ -272,7 +288,7 @@
 
     <div
       class="modal fade"
-      id="updateStoreModal"
+      id="createNewCategoryModal"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
@@ -283,7 +299,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="staticBackdropLabel1">
-              Update Store
+              Create New Category
             </h1>
             <button
               type="button"
@@ -293,34 +309,46 @@
             ></button>
           </div>
           <div class="modal-body">
+            <transition name="fadeError" v-show="showErrorForCreateCategory">
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ errorForCreateCategory }}
+              </div>
+            </transition>
+            <transition
+              name="fadeError"
+              v-show="showRequiredInputsErrorForCategories"
+            >
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ requiredInputsErrorForCategories }}
+              </div>
+            </transition>
             <label for="#newStoreNameInt" class="form-label"
-              >New Store Name</label
+              >New Category Name</label
             >
             <input
               id="newStoreNameInt"
               class="form-control mt-1"
               type="text"
-              v-model="updatedStoreName"
-              placeholder="Enter A New Name if you want"
-            />
-            <hr class="w-100" />
-            <label for="#newStoreAdminsInt" class="form-label"
-              >New Store Admins</label
-            >
-            <input
-              id="newStoreAdminsInt"
-              type="text"
-              class="form-control mt-1"
-              placeholder="Add , Between The Names"
-              v-model="updatedStoreAdmins"
+              v-model="newCategoryName"
+              placeholder="Enter A Name For The New Category"
             />
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">
               Close
             </button>
-            <button type="button" class="btn btn-dark" @click="createNewStore">
-              Update
+            <button
+              type="button"
+              class="btn btn-dark"
+              @click="createNewCategory"
+            >
+              Create
             </button>
           </div>
         </div>
@@ -345,13 +373,23 @@ const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
 const searchCategory = ref<string>("");
-const updatedStoreName = ref<string>("");
-const updatedStoreAdmins = ref<any>([]);
+const newCategoryName = ref<string>("");
+const requiredInputsErrorForCategories = ref<string>("");
+const showRequiredInputsErrorForCategories = ref<boolean>(false);
+const requiredInputsErrorForStores = ref<string>("");
+const showRequiredInputsErrorForStores = ref<boolean>(false);
+
 const currentStoreCategories = computed(() => {
   return store.state.currentStoreCategories;
 });
 const yourStores = computed(() => {
   return store.state.yourStores;
+});
+const errorForCreateCategory = computed(() => {
+  return store.state.errorForCreateNewCategory;
+});
+const showErrorForCreateCategory = computed(() => {
+  return store.state.showErrorForCreateNewCategory;
 });
 
 onMounted(() => {
@@ -377,10 +415,19 @@ const yourComputedStores = computed(() => {
 });
 
 const createNewStore = async (): Promise<void> => {
-  store.dispatch("createNewStore", {
-    newStoreName: newStoreName.value,
-    newStoreAdmins: newStoreAdmins.value,
-  });
+  if (newStoreName.value != "" && newStoreAdmins.value != "") {
+    store.dispatch("createNewStore", {
+      newStoreName: newStoreName.value,
+      newStoreAdmins: newStoreAdmins.value,
+    });
+  } else {
+    requiredInputsErrorForStores.value = "The inputs are required";
+    showRequiredInputsErrorForStores.value = true;
+
+    setTimeout(() => {
+      showRequiredInputsErrorForStores.value = false;
+    }, 3000);
+  }
 };
 
 const getYourStores = async (): Promise<void> => {
@@ -409,8 +456,23 @@ const getYourStoreCategories = async (): Promise<void> => {
   store.dispatch("getCurrentStoreCategories");
 };
 
-const deleteCategory = async (categoryName: string): Promise<void> => {
-  store.dispatch("deleteCategory", { categoryName: categoryName });
+const createNewCategory = async (): Promise<void> => {
+  if (newCategoryName.value != "") {
+    store.dispatch("createNewCategory", {
+      newCategoryName: newCategoryName.value,
+    });
+  } else {
+    requiredInputsErrorForCategories.value = "The inputs are required";
+    showRequiredInputsErrorForCategories.value = true;
+
+    setTimeout(() => {
+      showRequiredInputsErrorForCategories.value = false;
+    }, 3000);
+  }
+};
+
+const deleteCategory = async (categoryId: string): Promise<void> => {
+  store.dispatch("deleteCategory", { categoryId: categoryId });
 };
 
 function onBeforeEnter(el: any) {
