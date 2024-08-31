@@ -6,6 +6,7 @@ import { RegistrationModule } from './registration/registration.module';
 import { StoresManagementModule } from './stores-management/stores-management.module';
 import { UsersManagementModule } from './users-management/users-management.module';
 import { CategoriesModule } from './categories/categories.module';
+import { SizesModule } from './sizes/sizes.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CategoriesModule } from './categories/categories.module';
     StoresManagementModule,
     UsersManagementModule,
     CategoriesModule,
+    SizesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
