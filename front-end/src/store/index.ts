@@ -13,6 +13,8 @@ const store = createStore({
     userId: localStorage.getItem("UserId"),
     errorForCreateNewCategory: <string>"",
     showErrorForCreateNewCategory: <boolean>false,
+    errorForCreateNewSize: <string>"",
+    showErrorForCreateNewSize: <boolean>false,
   },
   getters: {},
   mutations: {
@@ -230,6 +232,55 @@ const store = createStore({
         const data = await response.json();
         if (data.statusCode >= 200 && data.statusCode < 300) {
           window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async getSizes(context, payload): Promise<void> {
+      try {
+        const response = await fetch(
+          `http://192.168.1.241:3000/sizes/getSizes/${this.state.currentStoreId}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          this.state.currentStoreSizes = data.data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async createNewSize(context, { theSelectedSize }): Promise<void> {
+      try {
+        const requestOptions: RequestOptionsType | any = {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: this.state.userId,
+            storeId: this.state.currentStoreId,
+            storeName: this.state.currentStoreName,
+            sizeName: theSelectedSize,
+          }),
+        };
+
+        const response = await fetch(
+          "http://192.168.1.241:3000/sizes/createSize",
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          window.location.reload();
+        } else {
+          this.state.errorForCreateNewSize = data.message;
+          this.state.showErrorForCreateNewSize = true;
+
+          setTimeout(() => {
+            this.state.showErrorForCreateNewSize = false;
+          }, 3000);
         }
       } catch (err) {
         console.log(err);

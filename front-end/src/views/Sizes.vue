@@ -148,7 +148,7 @@
         <button
           class="btn btn-dark text-center"
           data-bs-toggle="modal"
-          data-bs-target="#createNewCategoryModal"
+          data-bs-target="#createNewSizeModal"
         >
           <i class="bi bi-plus"></i> Add New
         </button>
@@ -174,6 +174,7 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
+              <th scope="col">Letter</th>
               <th scope="col">Time</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
@@ -186,10 +187,11 @@
               @enter="onEnter"
               @leave="onLeave"
             >
-              <tr>
-                <th scope="row"></th>
-                <td></td>
-                <td></td>
+              <tr v-for="size in yourComputedSizes">
+                <th scope="row">{{ size.sizeName }}</th>
+                <td>{{ size.sizeLetter }}</td>
+                <td>{{ size.createdAtTime }}</td>
+                <td>{{ size.createdAtDate }}</td>
                 <td>
                   <button class="btn btn-danger">
                     <i class="bi bi-trash"></i>
@@ -281,6 +283,130 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="modal fade"
+      id="createNewSizeModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel1">
+              Create New Size
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div
+            class="modal-body d-flex flex-column justify-content-center align-items-center"
+          >
+            <transition name="fadeError" v-show="showErrorForCreateSize">
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ errorForCreateSize }}
+              </div>
+            </transition>
+            <transition
+              name="fadeError"
+              v-show="showRequiredInputsErrorForSizes"
+            >
+              <div
+                class="alert alert-danger fade show w-100 text-center"
+                role="alert"
+              >
+                {{ requiredInputsErrorForSizes }}
+              </div>
+            </transition>
+
+            <h5 class="text-center w-100">Select A New Size</h5>
+            <hr class="w-100" />
+
+            <div
+              class="form-check d-flex flex-column justify-content-start align-items-start w-100"
+            >
+              <div class="d-flex flex-row">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="verySmall"
+                  v-model="theSelectedSize"
+                  value="Very Small"
+                />
+                <label class="form-check-label ms-2" for="verySmall">
+                  Very Small
+                </label>
+              </div>
+              <div class="d-flex flex-row mt-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="small"
+                  v-model="theSelectedSize"
+                  value="Small"
+                />
+                <label class="form-check-label ms-2" for="small">Small</label>
+              </div>
+              <div class="d-flex flex-row mt-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="medium"
+                  v-model="theSelectedSize"
+                  value="Medium"
+                />
+                <label class="form-check-label ms-2" for="medium">Medium</label>
+              </div>
+              <div class="d-flex flex-row mt-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="large"
+                  v-model="theSelectedSize"
+                  value="Large"
+                />
+                <label class="form-check-label ms-2" for="large">Large</label>
+              </div>
+              <div class="d-flex flex-row mt-2">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="flexRadioDefault"
+                  id="veryLarge"
+                  v-model="theSelectedSize"
+                  value="Very Large"
+                />
+                <label class="form-check-label ms-2" for="veryLarge">
+                  Very Large
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-dark" @click="createNewSize">
+              Create
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -295,10 +421,21 @@ const searchStore = ref<string>("");
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
 const searchSize = ref<string>("");
+const theSelectedSize = ref<string>("");
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<any>([]);
 const requiredInputsErrorForStores = ref<string>("");
 const showRequiredInputsErrorForStores = ref<boolean>(false);
+const requiredInputsErrorForSizes = ref<string>("");
+const showRequiredInputsErrorForSizes = ref<boolean>(false);
+
+const errorForCreateSize = computed(() => {
+  return store.state.errorForCreateNewSize;
+});
+
+const showErrorForCreateSize = computed(() => {
+  return store.state.showErrorForCreateNewSize;
+});
 
 const currentStoreSizes = computed(() => {
   return store.state.currentStoreSizes;
@@ -362,6 +499,23 @@ const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
 };
 
+const getYourStoreSizes = async (): Promise<void> => {
+  store.dispatch("getSizes");
+};
+
+const createNewSize = async (): Promise<void> => {
+  if (theSelectedSize.value != "") {
+    store.dispatch("createNewSize", { theSelectedSize: theSelectedSize.value });
+  } else {
+    requiredInputsErrorForSizes.value = "You must choose a size";
+    showRequiredInputsErrorForSizes.value = true;
+
+    setTimeout(() => {
+      showRequiredInputsErrorForSizes.value = false;
+    }, 3000);
+  }
+};
+
 const logout = async (): Promise<void> => {
   store.dispatch("logout");
 };
@@ -391,4 +545,5 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
+getYourStoreSizes();
 </script>

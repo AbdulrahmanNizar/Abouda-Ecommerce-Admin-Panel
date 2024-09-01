@@ -7,7 +7,7 @@
     >
       <i class="bi bi-hdd-stack"></i>
       Post
-      <button class="btn btn-dark ms-1" @click="copyUrl('CreateCategoryUrl')">
+      <button class="btn btn-dark ms-1" @click="copyUrl('CreateUrl')">
         <i class="bi bi-clipboard-check"></i>
       </button>
     </h4>
@@ -16,7 +16,7 @@
     <input
       class="w-50 form-control text-center"
       ref="CreateCategoryUrl"
-      value="http://192.168.1.241:3000/categories/createCategory"
+      value="http://192.168.1.241:3000/sizes/createSize"
       readonly
     />
   </div>
@@ -28,7 +28,7 @@
     >
       <i class="bi bi-hdd-stack"></i>
       Delete
-      <button class="btn btn-dark ms-1" @click="copyUrl('DeleteCategroyUrl')">
+      <button class="btn btn-dark ms-1" @click="copyUrl('DeleteUrl')">
         <i class="bi bi-clipboard-check"></i>
       </button>
     </h4>
@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteCategroyUrl"
-      value="http://192.168.1.241:3000/categories/deleteCategory/:categoryName"
+      value="http://192.168.1.241:3000/sizes/deleteSize/:sizeId"
       readonly
     />
   </div>
@@ -48,7 +48,7 @@
     >
       <i class="bi bi-hdd-stack"></i>
       Get
-      <button class="btn btn-dark ms-1" @click="copyUrl('GetCategoryUrl')">
+      <button class="btn btn-dark ms-1" @click="copyUrl('GetUrl')">
         <i class="bi bi-clipboard-check"></i>
       </button>
     </h4>
@@ -56,7 +56,7 @@
     <input
       class="w-50 form-control text-center"
       ref="GetCategoryUrl"
-      value="http://192.168.1.241:3000/categories/getCategories/:storeId"
+      value="http://192.168.1.241:3000/sizes/getSizes/:storeId"
       readonly
     />
   </div>
@@ -71,15 +71,15 @@ const DeleteCategroyUrl = ref<any>();
 
 const copyUrl = (selectedUrl: string): void => {
   switch (selectedUrl != "") {
-    case selectedUrl == "CreateCategoryUrl":
+    case selectedUrl == "CreateUrl":
       CreateCategoryUrl.value.select();
       document.execCommand("copy");
       break;
-    case selectedUrl == "GetCategoryUrl":
+    case selectedUrl == "GetUrl":
       GetCategoryUrl.value.select();
       document.execCommand("copy");
       break;
-    case selectedUrl == "DeleteCategroyUrl":
+    case selectedUrl == "DeleteUrl":
       DeleteCategroyUrl.value.select();
       document.execCommand("copy");
       break;
