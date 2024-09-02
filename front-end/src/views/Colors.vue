@@ -91,12 +91,12 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/sizes' }"
+              <router-link class="nav-link" :to="{ path: '/sizes' }"
                 >Sizes</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ path: '/colors' }"
+              <router-link class="nav-link active" :to="{ path: '/colors' }"
                 >Colors</router-link
               >
             </li>
@@ -137,9 +137,9 @@
         class="w-100 d-flex flex-column justify-content-start align-items-start"
       >
         <h3 class="fw-bold ms-2 text-start">
-          Sizes ({{ yourComputedSizes.length }})
+          Colors ({{ yourComputedColors.length }})
         </h3>
-        <p class="text-start ms-2">Manage sizes of your store</p>
+        <p class="text-start ms-2">Manage colors of your store</p>
       </div>
       <div
         class="d-flex flex-row justify-content-center align-items-center me-4"
@@ -165,19 +165,18 @@
       >
         <input
           type="text"
-          placeholder="Search Size"
+          placeholder="Search Color"
           class="form-control w-50 mb-3"
-          v-model="searchSize"
+          v-model="searchColor"
         />
 
         <table
           class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto"
-          v-if="yourComputedSizes.length > 0"
+          v-if="yourComputedColors.length > 0"
         >
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Letter</th>
               <th scope="col">Time</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
@@ -190,13 +189,12 @@
               @enter="onEnter"
               @leave="onLeave"
             >
-              <tr v-for="size in yourComputedSizes">
-                <th scope="row">{{ size.sizeName }}</th>
-                <td>{{ size.sizeLetter }}</td>
-                <td>{{ size.createdAtTime }}</td>
-                <td>{{ size.createdAtDate }}</td>
+              <tr v-for="color in yourComputedColors">
+                <th scope="row">{{ color.colorName }}</th>
+                <td>{{ color.createdAtTime }}</td>
+                <td>{{ color.createdAtDate }}</td>
                 <td>
-                  <button class="btn btn-danger" @click="deleteSize(size._id)">
+                  <button class="btn btn-danger">
                     <i class="bi bi-trash"></i>
                   </button>
                 </td>
@@ -213,7 +211,7 @@
       class="w-100 text-center d-flex flex-column justify-content-center align-items-center p-3"
     >
       <h3>Api Calls</h3>
-      <p>Api calls for sizes</p>
+      <p>Api calls for colors</p>
       <hr class="w-100" />
 
       <ApiCardsForSizes />
@@ -300,7 +298,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="staticBackdropLabel1">
-              Create New Size
+              Create New Color
             </h1>
             <button
               type="button"
@@ -310,100 +308,42 @@
             ></button>
           </div>
           <div
-            class="modal-body d-flex flex-column justify-content-center align-items-center"
+            class="modal-body d-flex flex-column justify-content-start align-items-start"
           >
-            <transition name="fadeError" v-show="showErrorForCreateSize">
+            <transition name="fadeError" v-show="showErrorForCreateColors">
               <div
                 class="alert alert-danger fade show w-100 text-center"
                 role="alert"
               >
-                {{ errorForCreateSize }}
+                {{ errorForCreateColors }}
               </div>
             </transition>
             <transition
               name="fadeError"
-              v-show="showRequiredInputsErrorForSizes"
+              v-show="showRequiredInputsErrorForColors"
             >
               <div
                 class="alert alert-danger fade show w-100 text-center"
                 role="alert"
               >
-                {{ requiredInputsErrorForSizes }}
+                {{ requiredInputsErrorForColors }}
               </div>
             </transition>
 
-            <h5 class="text-center w-100">Select A New Size</h5>
-            <hr class="w-100" />
-
-            <div
-              class="form-check d-flex flex-column justify-content-start align-items-start w-100"
-            >
-              <div class="d-flex flex-row">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="verySmall"
-                  v-model="theSelectedSize"
-                  value="Very Small"
-                />
-                <label class="form-check-label ms-2" for="verySmall">
-                  Very Small
-                </label>
-              </div>
-              <div class="d-flex flex-row mt-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="small"
-                  v-model="theSelectedSize"
-                  value="Small"
-                />
-                <label class="form-check-label ms-2" for="small">Small</label>
-              </div>
-              <div class="d-flex flex-row mt-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="medium"
-                  v-model="theSelectedSize"
-                  value="Medium"
-                />
-                <label class="form-check-label ms-2" for="medium">Medium</label>
-              </div>
-              <div class="d-flex flex-row mt-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="large"
-                  v-model="theSelectedSize"
-                  value="Large"
-                />
-                <label class="form-check-label ms-2" for="large">Large</label>
-              </div>
-              <div class="d-flex flex-row mt-2">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="flexRadioDefault"
-                  id="veryLarge"
-                  v-model="theSelectedSize"
-                  value="Very Large"
-                />
-                <label class="form-check-label ms-2" for="veryLarge">
-                  Very Large
-                </label>
-              </div>
-            </div>
+            <label for="#newColorName" class="form-label">New Color Name</label>
+            <input
+              type="text"
+              v-model="newColorName"
+              class="form-control mt-1"
+              placeholder="Enter The New Color Name"
+              id="newColorName"
+            />
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">
               Close
             </button>
-            <button type="button" class="btn btn-dark" @click="createNewSize">
+            <button type="button" class="btn btn-dark" @click="createNewColor">
               Create
             </button>
           </div>
@@ -423,25 +363,25 @@ const store = useStore();
 const searchStore = ref<string>("");
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
-const searchSize = ref<string>("");
-const theSelectedSize = ref<string>("");
+const searchColor = ref<string>("");
+const newColorName = ref<string>("");
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<any>([]);
 const requiredInputsErrorForStores = ref<string>("");
 const showRequiredInputsErrorForStores = ref<boolean>(false);
-const requiredInputsErrorForSizes = ref<string>("");
-const showRequiredInputsErrorForSizes = ref<boolean>(false);
+const requiredInputsErrorForColors = ref<string>("");
+const showRequiredInputsErrorForColors = ref<boolean>(false);
 
-const errorForCreateSize = computed(() => {
-  return store.state.errorForCreateNewSize;
+const errorForCreateColors = computed(() => {
+  return store.state.errorForCreateNewColor;
 });
 
-const showErrorForCreateSize = computed(() => {
-  return store.state.showErrorForCreateNewSize;
+const showErrorForCreateColors = computed(() => {
+  return store.state.showErrorForCreateNewColor;
 });
 
-const currentStoreSizes = computed(() => {
-  return store.state.currentStoreSizes;
+const currentStoreColors = computed(() => {
+  return store.state.currentStoreColors;
 });
 
 const yourStores = computed(() => {
@@ -454,9 +394,9 @@ const yourComputedStores = computed(() => {
   );
 });
 
-const yourComputedSizes = computed(() => {
-  return currentStoreSizes.value.filter((size: any) =>
-    size.sizeName.toLowerCase().includes(searchSize.value)
+const yourComputedColors = computed(() => {
+  return currentStoreColors.value.filter((size: any) =>
+    size.sizeName.toLowerCase().includes(searchColor.value)
   );
 });
 
@@ -502,25 +442,8 @@ const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
 };
 
-const getYourStoreSizes = async (): Promise<void> => {
-  store.dispatch("getSizes");
-};
-
-const createNewSize = async (): Promise<void> => {
-  if (theSelectedSize.value != "") {
-    store.dispatch("createNewSize", { theSelectedSize: theSelectedSize.value });
-  } else {
-    requiredInputsErrorForSizes.value = "You must choose a size";
-    showRequiredInputsErrorForSizes.value = true;
-
-    setTimeout(() => {
-      showRequiredInputsErrorForSizes.value = false;
-    }, 3000);
-  }
-};
-
-const deleteSize = async (sizeId: string): Promise<void> => {
-  store.dispatch("deleteSize", { sizeId: sizeId });
+const createNewColor = async (): Promise<void> => {
+  store.dispatch("createNewColor", { newColorName: newColorName.value });
 };
 
 const logout = async (): Promise<void> => {
@@ -552,5 +475,4 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
-getYourStoreSizes();
 </script>

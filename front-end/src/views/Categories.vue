@@ -171,7 +171,7 @@
         />
 
         <table
-          class="w-100 mt-3 me-3 bg-none table"
+          class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto"
           v-if="yourComputedCategories.length > 0"
         >
           <thead>
