@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteCategroyUrl"
-      value="http://192.168.1.241:3000/sizes/deleteSize/:sizeId"
+      value="http://192.168.1.241:3000/sizes/deleteSize/:userId/:sizeId"
       readonly
     />
   </div>

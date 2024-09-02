@@ -294,12 +294,13 @@ const store = createStore({
           mode: "cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            storeId: this.state.currentStoreId,
             userId: this.state.userId,
           }),
         };
 
         const response = await fetch(
-          `http://192.168.1.241:3000/sizes/deleteSize/${sizeId}`,
+          `http://192.168.1.241:3000/sizes/deleteSize/${this.state.userId}/${sizeId}`,
           requestOptions
         );
         const data = await response.json();

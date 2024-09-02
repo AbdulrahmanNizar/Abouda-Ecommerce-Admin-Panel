@@ -170,7 +170,10 @@
           v-model="searchSize"
         />
 
-        <table class="w-100 mt-3 me-3 bg-none table">
+        <table
+          class="w-100 mt-3 me-3 bg-none table"
+          v-if="yourComputedSizes.length > 0"
+        >
           <thead>
             <tr>
               <th scope="col">Name</th>
