@@ -287,6 +287,30 @@ const store = createStore({
       }
     },
 
+    async deleteSize(context, { sizeId }): Promise<void> {
+      try {
+        const requestOptions: RequestOptionsType | any = {
+          method: "DELETE",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: this.state.userId,
+          }),
+        };
+
+        const response = await fetch(
+          `http://192.168.1.241:3000/sizes/deleteSize/${sizeId}`,
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
     async logout(context, payload): Promise<void> {
       try {
         const requestOptions: RequestOptionsType | any = {

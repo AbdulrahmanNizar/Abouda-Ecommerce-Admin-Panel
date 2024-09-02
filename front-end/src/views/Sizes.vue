@@ -193,7 +193,7 @@
                 <td>{{ size.createdAtTime }}</td>
                 <td>{{ size.createdAtDate }}</td>
                 <td>
-                  <button class="btn btn-danger">
+                  <button class="btn btn-danger" @click="deleteSize(size._id)">
                     <i class="bi bi-trash"></i>
                   </button>
                 </td>
@@ -514,6 +514,10 @@ const createNewSize = async (): Promise<void> => {
       showRequiredInputsErrorForSizes.value = false;
     }, 3000);
   }
+};
+
+const deleteSize = async (sizeId: string): Promise<void> => {
+  store.dispatch("deleteSize", { sizeId: sizeId });
 };
 
 const logout = async (): Promise<void> => {
