@@ -1,6 +1,6 @@
 export class CreateSizeDto {
-  userId: string;
-  storeId: string;
-  storeName: string;
-  sizeName: string;
+  readonly userId: string;
+  readonly storeId: string;
+  readonly storeName: string;
+  readonly sizeName: string;
 }

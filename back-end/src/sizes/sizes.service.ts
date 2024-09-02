@@ -67,6 +67,7 @@ export class SizesService {
     requestInfo: DeleteSizeDto,
   ): Promise<SuccessResponseObjectDto | void> {
     try {
+      console.log('started');
       await this.sizeModel.deleteOne({ _id: requestInfo.sizeId });
       return {
         successMessage: 'Size deleted successfully',

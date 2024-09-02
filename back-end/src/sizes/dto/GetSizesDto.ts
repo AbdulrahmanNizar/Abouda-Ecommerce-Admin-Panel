@@ -1,3 +1,3 @@
 export class GetSizesDto {
-  storeId: string;
+  readonly storeId: string;
 }
