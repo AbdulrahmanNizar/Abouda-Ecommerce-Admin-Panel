@@ -8,6 +8,7 @@ import { CreateSizeDto } from './dto/CreateSizeDto';
 import { sizeLetter } from 'src/helpers/SizeLetter';
 import { currentTime } from 'src/helpers/Time';
 import { todayDate } from 'src/helpers/Date';
+import { DeleteSizeDto } from './dto/DeleteSizeDto';
 
 @Injectable()
 export class SizesService {
@@ -57,6 +58,20 @@ export class SizesService {
           statusCode: 201,
         };
       }
+    } catch (err) {
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async deleteSize(
+    requestInfo: DeleteSizeDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      await this.sizeModel.deleteOne({ _id: requestInfo.sizeId });
+      return {
+        successMessage: 'Size deleted successfully',
+        statusCode: 200,
+      };
     } catch (err) {
       throw new HttpException(err, err.status);
     }

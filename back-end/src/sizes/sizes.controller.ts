@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,6 +13,7 @@ import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { GetSizesDto } from './dto/GetSizesDto';
 import { AdminGuard } from './guards/admin/admin.guard';
 import { CreateSizeDto } from './dto/CreateSizeDto';
+import { DeleteSizeDto } from './dto/DeleteSizeDto';
 
 @Controller('sizes')
 export class SizesController {
@@ -32,5 +34,14 @@ export class SizesController {
     @Res() res,
   ): Promise<SuccessResponseObjectDto | void> {
     res.status(201).json(await this.sizesService.createSize(createSizeDto));
+  }
+
+  @Delete('/deleteSize/:userId/:sizeId')
+  @UseGuards(AdminGuard)
+  async deleteSize(
+    @Param() deleteSizeDto: DeleteSizeDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res.status(200).json(await this.sizesService.deleteSize(deleteSizeDto));
   }
 }
