@@ -194,7 +194,10 @@
                 <td>{{ color.createdAtTime }}</td>
                 <td>{{ color.createdAtDate }}</td>
                 <td>
-                  <button class="btn btn-danger">
+                  <button
+                    class="btn btn-danger"
+                    @click="deleteColor(color._id)"
+                  >
                     <i class="bi bi-trash"></i>
                   </button>
                 </td>
@@ -214,7 +217,7 @@
       <p>Api calls for colors</p>
       <hr class="w-100" />
 
-      <ApiCardsForSizes />
+      <ApiCardsForColors />
     </div>
 
     <div
@@ -357,7 +360,7 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import ApiCardsForSizes from "@/components/ApiCardsForSizes.vue";
+import ApiCardsForColors from "@/components/ApiCardsForColors.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");
@@ -395,8 +398,8 @@ const yourComputedStores = computed(() => {
 });
 
 const yourComputedColors = computed(() => {
-  return currentStoreColors.value.filter((size: any) =>
-    size.sizeName.toLowerCase().includes(searchColor.value)
+  return currentStoreColors.value.filter((color: any) =>
+    color.colorName.toLowerCase().includes(searchColor.value)
   );
 });
 
@@ -442,8 +445,16 @@ const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
 };
 
+const getYourStoreColors = async (): Promise<void> => {
+  store.dispatch("getColors");
+};
+
 const createNewColor = async (): Promise<void> => {
   store.dispatch("createNewColor", { newColorName: newColorName.value });
+};
+
+const deleteColor = async (colorId: string): Promise<void> => {
+  store.dispatch("deleteColor", { colorId: colorId });
 };
 
 const logout = async (): Promise<void> => {
@@ -475,4 +486,5 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
+getYourStoreColors();
 </script>
