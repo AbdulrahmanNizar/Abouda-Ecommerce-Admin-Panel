@@ -37,6 +37,7 @@ export class SizesService {
     try {
       const sizeInDB = await this.sizeModel.find({
         sizeName: requestInfo.sizeName,
+        storeId: requestInfo.storeId,
       });
 
       if (sizeInDB.length > 0) {
@@ -67,7 +68,6 @@ export class SizesService {
     requestInfo: DeleteSizeDto,
   ): Promise<SuccessResponseObjectDto | void> {
     try {
-      console.log('started');
       await this.sizeModel.deleteOne({ _id: requestInfo.sizeId });
       return {
         successMessage: 'Size deleted successfully',
