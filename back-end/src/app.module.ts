@@ -8,6 +8,7 @@ import { UsersManagementModule } from './users-management/users-management.modul
 import { CategoriesModule } from './categories/categories.module';
 import { SizesModule } from './sizes/sizes.module';
 import { ColorsModule } from './colors/colors.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ColorsModule } from './colors/colors.module';
     CategoriesModule,
     SizesModule,
     ColorsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
