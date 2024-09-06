@@ -7,6 +7,7 @@ export const productSchema = new mongoose.Schema({
   productCategory: { type: String, required: true },
   productSize: { type: String, required: true },
   productName: { type: String, required: true },
+  productImage: { type: Object, required: true },
   createdAtTime: { type: String, required: true },
   createdAtDate: { type: String, required: true },
 });
@@ -21,4 +22,5 @@ export interface Product {
   productName: string;
   createdAtTime: string;
   createdAtDate: string;
+  productImage: string | any;
 }
