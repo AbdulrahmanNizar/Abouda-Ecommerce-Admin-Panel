@@ -6,6 +6,8 @@ import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { CreateProductDto } from './dto/CreateProductDto';
 import { todayDate } from 'src/helpers/Date';
 import { currentTime } from 'src/helpers/Time';
+import { GetProductsDto } from './dto/GetProductsDto';
+import { DeleteProductDto } from './dto/DeleteProductDto';
 
 @Injectable()
 export class ProductsService {
@@ -43,6 +45,39 @@ export class ProductsService {
       }
     } catch (err) {
       console.log(err);
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async getProducts(
+    requestInfo: GetProductsDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      const productsInDB = await this.productModel.find({
+        storeId: requestInfo.storeId,
+      });
+
+      return {
+        successMessage: 'Got the products successfully',
+        statusCode: 200,
+        data: productsInDB,
+      };
+    } catch (err) {
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async deleteProduct(
+    requestInfo: DeleteProductDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      await this.productModel.deleteOne({ _id: requestInfo.productId });
+
+      return {
+        successMessage: 'Product deleted successfully',
+        statusCode: 200,
+      };
+    } catch (err) {
       throw new HttpException(err, err.status);
     }
   }
