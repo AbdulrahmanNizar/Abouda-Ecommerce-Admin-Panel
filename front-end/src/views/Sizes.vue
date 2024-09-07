@@ -178,7 +178,6 @@
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Letter</th>
-              <th scope="col">Time</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
             </tr>
@@ -193,7 +192,6 @@
               <tr v-for="size in yourComputedSizes">
                 <th scope="row">{{ size.sizeName }}</th>
                 <td>{{ size.sizeLetter }}</td>
-                <td>{{ size.createdAtTime }}</td>
                 <td>{{ size.createdAtDate }}</td>
                 <td>
                   <button class="btn btn-danger" @click="deleteSize(size._id)">

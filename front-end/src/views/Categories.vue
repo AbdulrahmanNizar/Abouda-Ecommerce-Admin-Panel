@@ -177,7 +177,6 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Time</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
             </tr>
@@ -191,7 +190,6 @@
             >
               <tr v-for="category in yourComputedCategories">
                 <th scope="row">{{ category.categoryName }}</th>
-                <td>{{ category.createdAtTime }}</td>
                 <td>{{ category.createdAtDate }}</td>
                 <td>
                   <button

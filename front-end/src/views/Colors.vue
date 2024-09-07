@@ -177,7 +177,6 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Time</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
             </tr>
@@ -191,7 +190,6 @@
             >
               <tr v-for="color in yourComputedColors">
                 <th scope="row">{{ color.colorName }}</th>
-                <td>{{ color.createdAtTime }}</td>
                 <td>{{ color.createdAtDate }}</td>
                 <td>
                   <button

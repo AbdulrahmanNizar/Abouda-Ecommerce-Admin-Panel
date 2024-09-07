@@ -33,6 +33,23 @@
       <div
         class="d-flex flex-column justify-content-start align-items-start mt-3 p-2 col-md-4 col-6"
       >
+        <label for="#productPrice" class="form-label ms-2">Product Price</label>
+        <input
+          id="productPrice"
+          type="number"
+          placeholder="New Product Price"
+          class="form-control"
+          v-model="formData.newProductPrice"
+        />
+        <span
+          v-for="error in v$.newProductPrice.$errors"
+          class="text-danger mt-1 ms-2"
+          >{{ error.$message }}</span
+        >
+      </div>
+      <div
+        class="d-flex flex-column justify-content-start align-items-start mt-3 p-2 col-md-4 col-6"
+      >
         <label for="#productImage" class="form-label ms-2"
           >Product Picture</label
         >
@@ -160,6 +177,7 @@ const formData = reactive({
   newProductCategory: "",
   newProductSize: "",
   newProductColor: "",
+  newProductPrice: 0,
   productPictureBase64: "",
 });
 
@@ -169,6 +187,7 @@ const formRules = computed(() => {
     newProductCategory: { required },
     newProductSize: { required },
     newProductColor: { required },
+    newProductPrice: { required },
     productPictureBase64: { required },
   };
 });
@@ -178,7 +197,11 @@ const v$ = useVuelidate(formRules, formData);
 const createProduct = async (): Promise<void> => {
   const validationResult = await v$.value.$validate();
 
-  if (validationResult == true && formData.productPictureBase64 != "") {
+  if (
+    validationResult == true &&
+    formData.productPictureBase64 != "" &&
+    formData.newProductPrice > 0
+  ) {
     const requestOptions: RequestOptionsType | any = {
       method: "POST",
       mode: "cors",
@@ -191,6 +214,7 @@ const createProduct = async (): Promise<void> => {
         productSize: formData.newProductSize,
         productColor: formData.newProductColor,
         productCategory: formData.newProductCategory,
+        productPrice: formData.newProductPrice,
         productImage: formData.productPictureBase64,
       }),
     };

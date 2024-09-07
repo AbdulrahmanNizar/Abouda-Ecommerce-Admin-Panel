@@ -137,8 +137,7 @@
         class="w-100 d-flex flex-column justify-content-start align-items-start"
       >
         <h3 class="fw-bold ms-2 text-start">
-          Products
-          <!--  ({{ yourComputedProducts.length }}) -->
+          Products ({{ yourComputedProducts.length }})
         </h3>
         <p class="text-start ms-2">Manage products of your store</p>
       </div>
@@ -170,14 +169,17 @@
           v-model="searchProduct"
         />
 
-        <!-- <table
+        <table
           class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto"
           v-if="yourComputedProducts.length > 0"
         >
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Time</th>
+              <th scope="col">Price</th>
+              <th scope="col">Category</th>
+              <th scope="col">Color</th>
+              <th scope="col">Size</th>
               <th scope="col">Date</th>
               <th scope="col">Delete</th>
             </tr>
@@ -190,8 +192,11 @@
               @leave="onLeave"
             >
               <tr v-for="product in yourComputedProducts">
-                <th scope="row">{{ product.colorName }}</th>
-                <td>{{ product.createdAtTime }}</td>
+                <th scope="row">{{ product.productName }}</th>
+                <td>{{ product.productPrice }}</td>
+                <td>{{ product.productCategory }}</td>
+                <td>{{ product.productColor }}</td>
+                <td>{{ product.productSize }}</td>
                 <td>{{ product.createdAtDate }}</td>
                 <td>
                   <button
@@ -204,7 +209,7 @@
               </tr>
             </transition-group>
           </tbody>
-        </table> -->
+        </table>
       </div>
     </div>
 
@@ -217,7 +222,7 @@
       <p>Api calls for products</p>
       <hr class="w-100" />
 
-      <ApiCardsForColors />
+      <ApiCardsForProducts />
     </div>
 
     <div
@@ -294,14 +299,13 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import ApiCardsForColors from "@/components/ApiCardsForColors.vue";
+import ApiCardsForProducts from "@/components/ApiCardsForProducts.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
 const searchProduct = ref<string>("");
-const newColorName = ref<string>("");
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<any>([]);
 const requiredInputsErrorForStores = ref<string>("");
@@ -321,11 +325,11 @@ const yourComputedStores = computed(() => {
   );
 });
 
-// const yourComputedProducts = computed(() => {
-//   return currentStoreProducts.value.filter((product: any) =>
-//     product.productName.toLowerCase().includes(searchProduct.value)
-//   );
-// });
+const yourComputedProducts = computed(() => {
+  return currentStoreProducts.value.filter((product: any) =>
+    product.productName.toLowerCase().includes(searchProduct.value)
+  );
+});
 
 onMounted(() => {
   for (let i = 0; i < yourStores.value.length; i++) {
@@ -370,11 +374,11 @@ const deleteStore = async (storeId: string): Promise<void> => {
 };
 
 const getCurrentStoreProducts = async (): Promise<void> => {
-  store.dispatch("getProducts");
+  store.dispatch("getCurrentStoreProducts");
 };
 
-const deleteProduct = async (colorId: string): Promise<void> => {
-  store.dispatch("deleteProduct", { colorId: colorId });
+const deleteProduct = async (productId: string): Promise<void> => {
+  store.dispatch("deleteProduct", { productId: productId });
 };
 
 const logout = async (): Promise<void> => {
