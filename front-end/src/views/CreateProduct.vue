@@ -130,6 +130,10 @@
       </div>
     </nav>
 
+    <Suspense>
+      <CreateProductForm />
+    </Suspense>
+
     <div
       class="modal fade"
       id="createNewStoreModal"
@@ -204,6 +208,7 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
+import CreateProductForm from "@/components/CreateProductForm.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");

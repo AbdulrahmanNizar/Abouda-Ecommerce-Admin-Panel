@@ -146,13 +146,12 @@
         class="d-flex flex-row justify-content-center align-items-center me-4"
         style="width: 10%"
       >
-        <button
+        <router-link
+          :to="{ path: '/createProduct' }"
           class="btn btn-dark text-center"
-          data-bs-toggle="modal"
-          data-bs-target="#createNewSizeModal"
         >
           <i class="bi bi-plus"></i> Add New
-        </button>
+        </router-link>
       </div>
     </div>
 
