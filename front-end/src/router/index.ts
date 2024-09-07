@@ -5,6 +5,7 @@ import Overview from "@/views/Overview.vue";
 import Categories from "@/views/Categories.vue";
 import Sizes from "@/views/Sizes.vue";
 import Colors from "@/views/Colors.vue";
+import Products from "@/views/Products.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -45,6 +46,14 @@ const routes: Array<RouteRecordRaw> = [
     name: "Colors",
     path: "/colors",
     component: Colors,
+    meta: {
+      needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "Products",
+    path: "/products",
+    component: Products,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },
