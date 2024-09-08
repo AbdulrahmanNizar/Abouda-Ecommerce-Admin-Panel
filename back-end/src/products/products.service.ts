@@ -28,7 +28,7 @@ export class ProductsService {
         const newProduct = new this.productModel({
           storeId: requestInfo.storeId,
           storeName: requestInfo.storeName,
-          productPrice: requestInfo.productPrice,
+          productPrice: requestInfo.productPrice - 1 + 0.99,
           productName: requestInfo.productName,
           productSize: requestInfo.productSize,
           productColor: requestInfo.productColor,
