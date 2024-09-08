@@ -28,6 +28,7 @@ export class ProductsService {
         const newProduct = new this.productModel({
           storeId: requestInfo.storeId,
           storeName: requestInfo.storeName,
+          productPrice: requestInfo.productPrice,
           productName: requestInfo.productName,
           productSize: requestInfo.productSize,
           productColor: requestInfo.productColor,
@@ -44,7 +45,6 @@ export class ProductsService {
         };
       }
     } catch (err) {
-      console.log(err);
       throw new HttpException(err, err.status);
     }
   }
