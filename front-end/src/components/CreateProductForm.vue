@@ -197,11 +197,7 @@ const v$ = useVuelidate(formRules, formData);
 const createProduct = async (): Promise<void> => {
   const validationResult = await v$.value.$validate();
 
-  if (
-    validationResult == true &&
-    formData.productPictureBase64 != "" &&
-    formData.newProductPrice > 0
-  ) {
+  if (validationResult == true && formData.productPictureBase64 != "") {
     const requestOptions: RequestOptionsType | any = {
       method: "POST",
       mode: "cors",
