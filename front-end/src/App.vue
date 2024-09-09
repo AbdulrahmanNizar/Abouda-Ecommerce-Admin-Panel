@@ -34,13 +34,11 @@ onMounted(async (): Promise<void> => {
       );
       const data = await response.json();
       if (data.name == "JsonWebTokenError") {
-        localStorage.removeItem("UserId");
-        localStorage.removeItem("JwtToken");
+        localStorage.clear();
         router.push({ path: "/login" });
       }
     } else {
-      localStorage.removeItem("UserId");
-      localStorage.removeItem("JwtToken");
+      localStorage.clear();
       router.push({ path: "/login" });
     }
   }
