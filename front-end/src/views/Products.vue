@@ -193,7 +193,7 @@
             >
               <tr v-for="product in yourComputedProducts">
                 <th scope="row">{{ product.productName }}</th>
-                <td>{{ product.productPrice }}</td>
+                <td>${{ product.productPrice }}</td>
                 <td>{{ product.productCategory }}</td>
                 <td>{{ product.productColor }}</td>
                 <td>{{ product.productSize }}</td>
@@ -212,7 +212,7 @@
         </table>
 
         <div
-          class="w-100 d-md-none d-flex flex-column justify-content-center align-items-center border border-muted rounded mh-50 overflow-x-hidden overflow-y-auto"
+          class="w-100 p-3 d-md-none d-flex flex-column justify-content-center align-items-center border border-muted rounded mh-50 overflow-x-hidden overflow-y-auto"
         >
           <transition-group
             :css="false"
@@ -221,20 +221,22 @@
             @leave="onLeave"
           >
             <div
-              class="w-100 p-3 d-flex flex-column justify-content-center align-items-center"
+              class="w-100 p-3 d-flex flex-column justify-content-center align-items-center border border-muted rounded mt-1"
               v-for="product in yourComputedProducts"
             >
-              <p class="mb-0">{{ product.productName }}</p>
+              <p class="mb-0">Product Name: {{ product.productName }}</p>
               <hr class="w-100" />
-              <p class="mb-0">{{ product.productPrice }}</p>
+              <p class="mb-0">Product Price: ${{ product.productPrice }}</p>
               <hr class="w-100" />
-              <p class="mb-0">{{ product.productCategory }}</p>
+              <p class="mb-0">
+                Product Category: {{ product.productCategory }}
+              </p>
               <hr class="w-100" />
-              <p class="mb-0">{{ product.productColor }}</p>
+              <p class="mb-0">Product Color: {{ product.productColor }}</p>
               <hr class="w-100" />
-              <p class="mb-0">{{ product.productSize }}</p>
+              <p class="mb-0">Product Size: {{ product.productSize }}</p>
               <hr class="w-100" />
-              <p class="mb-0">{{ product.createdAtDate }}</p>
+              <p class="mb-0">Create At: {{ product.createdAtDate }}</p>
               <hr class="w-100" />
               <button
                 class="btn btn-danger w-100"
