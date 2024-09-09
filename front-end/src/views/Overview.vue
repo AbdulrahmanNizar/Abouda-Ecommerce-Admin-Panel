@@ -161,7 +161,7 @@
         v-for="storeDetail in currentStoreInformation"
       >
         <h4>Products In Stoke</h4>
-        <h2 class="fw-bold">{{ storeDetail.storeProducts.length }}</h2>
+        <h2 class="fw-bold">{{ currentStoreProducts.length }}</h2>
       </div>
     </div>
 
@@ -239,9 +239,14 @@ const newStoreName = ref<string>("");
 const newStoreAdmins = ref<string>("");
 const searchStore = ref<string>("");
 
+const currentStoreProducts = computed(() => {
+  return store.state.currentStoreProducts;
+});
+
 const yourStores = computed(() => {
   return store.state.yourStores;
 });
+
 const currentStoreInformation = computed(() => {
   return store.state.currentStoreInformation;
 });
@@ -287,6 +292,10 @@ const manageThisStore = (storeId: string, storeName: string) => {
   store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
 };
 
+const getCurrentStoreProducts = async (): Promise<void> => {
+  store.dispatch("getCurrentStoreProducts");
+};
+
 const logout = async (): Promise<void> => {
   store.dispatch("logout");
 };
@@ -316,4 +325,5 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
+getCurrentStoreProducts();
 </script>

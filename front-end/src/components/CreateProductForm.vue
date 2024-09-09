@@ -13,6 +13,11 @@
     <div
       class="w-100 d-flex flex-row justify-content-start align-items-center row"
     >
+      <transition name="fadeError" v-show="showErrorForCreateNewProduct">
+        <div class="alert alert-danger fade show" role="alert">
+          {{ errorForCreateNewProduct }}
+        </div>
+      </transition>
       <div
         class="d-flex flex-column justify-content-start align-items-start mt-3 p-2 col-md-4 col-6"
       >
@@ -158,6 +163,8 @@ const router = useRouter();
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const userId = ref<string | null>(localStorage.getItem("UserId"));
+const errorForCreateNewProduct = ref<string>("");
+const showErrorForCreateNewProduct = ref<boolean>(false);
 let productPicture: string | any;
 
 const currentStoreColors = computed(() => {
@@ -206,7 +213,7 @@ const createProduct = async (): Promise<void> => {
         userId: userId.value,
         storeId: currentStoreId.value,
         storeName: currentStoreName.value,
-        productName: formData.newProductName,
+        productName: formData.newProductName.toLowerCase(),
         productSize: formData.newProductSize,
         productColor: formData.newProductColor,
         productCategory: formData.newProductCategory,
@@ -222,6 +229,13 @@ const createProduct = async (): Promise<void> => {
     const data = await response.json();
     if (data.statusCode >= 200 && data.statusCode < 300) {
       router.push({ path: "/products" });
+    } else {
+      errorForCreateNewProduct.value = data.message;
+      showErrorForCreateNewProduct.value = true;
+
+      setTimeout(() => {
+        showErrorForCreateNewProduct.value = false;
+      }, 3000);
     }
   }
 };
@@ -231,7 +245,7 @@ const uploadPicture = (event: any) => {
   const reader = new FileReader();
 
   reader.addEventListener("load", () => {
-    const readerResult: any = reader.result;
+    const readerResult: string | any = reader.result;
     formData.productPictureBase64 = readerResult;
   });
 

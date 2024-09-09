@@ -170,7 +170,7 @@
         />
 
         <table
-          class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto"
+          class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto d-md-table d-none"
           v-if="yourComputedProducts.length > 0"
         >
           <thead>
@@ -210,6 +210,42 @@
             </transition-group>
           </tbody>
         </table>
+
+        <div
+          class="w-100 d-md-none d-flex flex-column justify-content-center align-items-center border border-muted rounded mh-50 overflow-x-hidden overflow-y-auto"
+        >
+          <transition-group
+            :css="false"
+            @before-enter="onBeforeEnter"
+            @enter="onEnter"
+            @leave="onLeave"
+          >
+            <div
+              class="w-100 p-3 d-flex flex-column justify-content-center align-items-center"
+              v-for="product in yourComputedProducts"
+            >
+              <p class="mb-0">{{ product.productName }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">{{ product.productPrice }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">{{ product.productCategory }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">{{ product.productColor }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">{{ product.productSize }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">{{ product.createdAtDate }}</p>
+              <hr class="w-100" />
+              <button
+                class="btn btn-danger w-100"
+                @click="deleteProduct(product._id)"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+              <hr class="w-100" />
+            </div>
+          </transition-group>
+        </div>
       </div>
     </div>
 
