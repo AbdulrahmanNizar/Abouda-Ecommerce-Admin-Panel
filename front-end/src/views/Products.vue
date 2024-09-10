@@ -245,7 +245,7 @@
               <hr class="w-100" />
               <p class="mb-0">Product Size: {{ product.productSize }}</p>
               <hr class="w-100" />
-              <p class="mb-0">Create At: {{ product.createdAtDate }}</p>
+              <p class="mb-0">Created At: {{ product.createdAtDate }}</p>
               <hr class="w-100" />
               <router-link
                 :to="{ path: '/updateProduct/' + product._id }"
