@@ -7,6 +7,7 @@ import {
   UseGuards,
   Param,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AdminGuard } from './guards/admin/admin.guard';
@@ -14,6 +15,7 @@ import { CreateProductDto } from './dto/CreateProductDto';
 import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { GetProductsDto } from './dto/GetProductsDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
+import { UpdateProductDto } from './dto/UpdateProductDto';
 
 @Controller('products')
 export class ProductsController {
@@ -49,5 +51,16 @@ export class ProductsController {
     res
       .status(200)
       .json(await this.productsService.deleteProduct(deleteProductDto));
+  }
+
+  @Patch('/updateProduct')
+  @UseGuards(AdminGuard)
+  async updateProduct(
+    @Body() updateProductDto: UpdateProductDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(await this.productsService.updateProduct(updateProductDto));
   }
 }

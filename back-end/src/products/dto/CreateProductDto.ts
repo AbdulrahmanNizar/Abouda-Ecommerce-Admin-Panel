@@ -7,5 +7,5 @@ export class CreateProductDto {
   readonly productColor: string;
   readonly productSize: string;
   readonly productCategory: string;
-  readonly productImage: any;
+  readonly productImage: string;
 }

@@ -8,6 +8,7 @@ import { todayDate } from 'src/helpers/Date';
 import { currentTime } from 'src/helpers/Time';
 import { GetProductsDto } from './dto/GetProductsDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
+import { UpdateProductDto } from './dto/UpdateProductDto';
 
 @Injectable()
 export class ProductsService {
@@ -77,6 +78,53 @@ export class ProductsService {
         successMessage: 'Product deleted successfully',
         statusCode: 200,
       };
+    } catch (err) {
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async updateProduct(
+    requestInfo: UpdateProductDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      if (requestInfo.updatedProductImage != '') {
+        await this.productModel.updateOne(
+          { _id: requestInfo.productId },
+          {
+            $set: {
+              productName: requestInfo.updatedProductName,
+              productCategory: requestInfo.updatedProductCategory,
+              productColor: requestInfo.updatedProductColor,
+              productSize: requestInfo.updatedProductSize,
+              productPrice: requestInfo.updatedProductPrice - 1 + 0.99,
+              productImage: requestInfo.updatedProductImage,
+            },
+          },
+        );
+
+        return {
+          successMessage: 'Product updated successfully',
+          statusCode: 200,
+        };
+      } else {
+        await this.productModel.updateOne(
+          { _id: requestInfo.productId },
+          {
+            $set: {
+              productName: requestInfo.updatedProductName,
+              productCategory: requestInfo.updatedProductCategory,
+              productColor: requestInfo.updatedProductColor,
+              productSize: requestInfo.updatedProductSize,
+              productPrice: requestInfo.updatedProductPrice - 1 + 0.99,
+            },
+          },
+        );
+
+        return {
+          successMessage: 'Product updated successfully',
+          statusCode: 200,
+        };
+      }
     } catch (err) {
       throw new HttpException(err, err.status);
     }
