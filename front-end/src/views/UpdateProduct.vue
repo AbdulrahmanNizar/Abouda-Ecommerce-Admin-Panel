@@ -130,153 +130,9 @@
       </div>
     </nav>
 
-    <div
-      class="w-100 d-flex flex-row justify-content-around align-items-center mt-3 p-3"
-    >
-      <div
-        class="w-100 d-flex flex-column justify-content-start align-items-start"
-      >
-        <h3 class="fw-bold ms-2 text-start">
-          Products ({{ yourComputedProducts.length }})
-        </h3>
-        <p class="text-start ms-2">Manage products of your store</p>
-      </div>
-      <div
-        class="d-flex flex-row justify-content-center align-items-center me-4"
-        style="width: 10%"
-      >
-        <router-link
-          :to="{ path: '/createProduct' }"
-          class="btn btn-dark text-center"
-        >
-          <i class="bi bi-plus"></i> Add New
-        </router-link>
-      </div>
-    </div>
-
-    <hr class="w-100" />
-
-    <div
-      class="w-100 d-flex flex-column justify-content-start align-items-start"
-    >
-      <div
-        class="d-flex flex-column justify-content-start align-items-start p-3 w-100"
-      >
-        <input
-          type="text"
-          placeholder="Search Product"
-          class="form-control w-50 mb-3"
-          v-model="searchProduct"
-        />
-
-        <table
-          class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto d-md-table d-none"
-          v-if="yourComputedProducts.length > 0"
-        >
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Price</th>
-              <th scope="col">Category</th>
-              <th scope="col">Color</th>
-              <th scope="col">Size</th>
-              <th scope="col">Date</th>
-              <th scope="col">Delete</th>
-              <th scope="col">Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            <transition-group
-              :css="false"
-              @before-enter="onBeforeEnter"
-              @enter="onEnter"
-              @leave="onLeave"
-            >
-              <tr v-for="product in yourComputedProducts">
-                <th scope="row">{{ product.productName }}</th>
-                <td>${{ product.productPrice }}</td>
-                <td>{{ product.productCategory }}</td>
-                <td>{{ product.productColor }}</td>
-                <td>{{ product.productSize }}</td>
-                <td>{{ product.createdAtDate }}</td>
-                <td>
-                  <button
-                    class="btn btn-danger"
-                    @click="deleteProduct(product._id)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-                <td>
-                  <router-link
-                    :to="{ path: '/updateProduct/' + product._id }"
-                    class="btn btn-dark"
-                  >
-                    <i class="bi bi-pencil-square"></i>
-                  </router-link>
-                </td>
-              </tr>
-            </transition-group>
-          </tbody>
-        </table>
-
-        <div
-          class="w-100 p-3 d-md-none d-flex flex-column justify-content-center align-items-center border border-muted rounded mh-50 overflow-x-hidden overflow-y-auto"
-        >
-          <transition-group
-            :css="false"
-            @before-enter="onBeforeEnter"
-            @enter="onEnter"
-            @leave="onLeave"
-          >
-            <div
-              class="w-100 p-3 d-flex flex-column justify-content-center align-items-center border border-muted rounded mt-1"
-              v-for="product in yourComputedProducts"
-            >
-              <p class="mb-0">Product Name: {{ product.productName }}</p>
-              <hr class="w-100" />
-              <p class="mb-0">Product Price: ${{ product.productPrice }}</p>
-              <hr class="w-100" />
-              <p class="mb-0">
-                Product Category: {{ product.productCategory }}
-              </p>
-              <hr class="w-100" />
-              <p class="mb-0">Product Color: {{ product.productColor }}</p>
-              <hr class="w-100" />
-              <p class="mb-0">Product Size: {{ product.productSize }}</p>
-              <hr class="w-100" />
-              <p class="mb-0">Create At: {{ product.createdAtDate }}</p>
-              <hr class="w-100" />
-              <router-link
-                :to="{ path: '/updateProduct/' + product._id }"
-                class="btn btn-dark w-100"
-              >
-                <i class="bi bi-pencil-square"></i>
-              </router-link>
-              <button
-                class="btn btn-danger w-100 mt-1"
-                @click="deleteProduct(product._id)"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
-              <hr class="w-100" />
-            </div>
-          </transition-group>
-        </div>
-      </div>
-    </div>
-
-    <hr class="w-100" />
-
-    <div
-      class="w-100 text-center d-flex flex-column justify-content-center align-items-center p-3"
-    >
-      <h3>Api Calls</h3>
-      <p>Api calls for products</p>
-      <hr class="w-100" />
-
-      <ApiCardsForProducts />
-    </div>
+    <Suspense>
+      <UpdateProductForm />
+    </Suspense>
 
     <div
       class="modal fade"
@@ -352,21 +208,16 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import ApiCardsForProducts from "@/components/ApiCardsForProducts.vue";
+import UpdateProductForm from "@/components/UpdateProductForm.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
-const searchProduct = ref<string>("");
 const newStoreName = ref<string>("");
 const newStoreAdmins = ref<any>([]);
 const requiredInputsErrorForStores = ref<string>("");
 const showRequiredInputsErrorForStores = ref<boolean>(false);
-
-const currentStoreProducts = computed(() => {
-  return store.state.currentStoreProducts;
-});
 
 const yourStores = computed(() => {
   return store.state.yourStores;
@@ -375,12 +226,6 @@ const yourStores = computed(() => {
 const yourComputedStores = computed(() => {
   return yourStores.value.filter((store: any) =>
     store.storeName.toLowerCase().includes(searchStore.value)
-  );
-});
-
-const yourComputedProducts = computed(() => {
-  return currentStoreProducts.value.filter((product: any) =>
-    product.productName.toLowerCase().includes(searchProduct.value)
   );
 });
 
@@ -426,14 +271,6 @@ const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
 };
 
-const getCurrentStoreProducts = async (): Promise<void> => {
-  store.dispatch("getCurrentStoreProducts");
-};
-
-const deleteProduct = async (productId: string): Promise<void> => {
-  store.dispatch("deleteProduct", { productId: productId });
-};
-
 const logout = async (): Promise<void> => {
   store.dispatch("logout");
 };
@@ -463,5 +300,4 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
-getCurrentStoreProducts();
 </script>
