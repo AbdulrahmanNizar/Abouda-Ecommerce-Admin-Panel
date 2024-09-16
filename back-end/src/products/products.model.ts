@@ -9,6 +9,8 @@ export const productSchema = new mongoose.Schema({
   productSize: { type: String, required: true },
   productName: { type: String, required: true },
   productImage: { type: Object, required: true },
+  featuredProduct: { type: Boolean, required: true },
+  archivedProduct: { type: Boolean, required: true },
   createdAtTime: { type: String, required: true },
   createdAtDate: { type: String, required: true },
 });
@@ -25,4 +27,6 @@ export interface Product {
   createdAtTime: string;
   createdAtDate: string;
   productImage: string | any;
+  featuredProduct: boolean;
+  archivedProduct: boolean;
 }

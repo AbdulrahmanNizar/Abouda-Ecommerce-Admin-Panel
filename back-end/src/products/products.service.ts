@@ -35,6 +35,8 @@ export class ProductsService {
           productColor: requestInfo.productColor,
           productCategory: requestInfo.productCategory,
           productImage: requestInfo.productImage,
+          featuredProduct: requestInfo.featuredProduct,
+          archivedProduct: requestInfo.archivedProduct,
           createdAtDate: todayDate,
           createdAtTime: currentTime,
         });
@@ -98,6 +100,8 @@ export class ProductsService {
               productSize: requestInfo.updatedProductSize,
               productPrice: requestInfo.updatedProductPrice - 1 + 0.99,
               productImage: requestInfo.updatedProductImage,
+              featuredProduct: requestInfo.featuredProduct,
+              archivedProduct: requestInfo.archivedProduct,
             },
           },
         );
@@ -116,6 +120,8 @@ export class ProductsService {
               productColor: requestInfo.updatedProductColor,
               productSize: requestInfo.updatedProductSize,
               productPrice: requestInfo.updatedProductPrice - 1 + 0.99,
+              featuredProduct: requestInfo.featuredProduct,
+              archivedProduct: requestInfo.archivedProduct,
             },
           },
         );

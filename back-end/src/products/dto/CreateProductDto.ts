@@ -8,4 +8,6 @@ export class CreateProductDto {
   readonly productSize: string;
   readonly productCategory: string;
   readonly productImage: string;
+  readonly featuredProduct: boolean;
+  readonly archivedProduct: boolean;
 }

@@ -8,4 +8,6 @@ export class UpdateProductDto {
   readonly updatedProductCategory: string;
   readonly updatedProductPrice: number;
   readonly updatedProductImage: string;
+  readonly featuredProduct: boolean;
+  readonly archivedProduct: boolean;
 }
