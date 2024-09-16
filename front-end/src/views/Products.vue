@@ -181,8 +181,7 @@
               <th scope="col">Color</th>
               <th scope="col">Size</th>
               <th scope="col">Date</th>
-              <th scope="col">Delete</th>
-              <th scope="col">Update</th>
+              <th scope="col">Settings</th>
             </tr>
           </thead>
           <tbody>
@@ -200,20 +199,32 @@
                 <td>{{ product.productSize }}</td>
                 <td>{{ product.createdAtDate }}</td>
                 <td>
-                  <button
-                    class="btn btn-danger"
-                    @click="deleteProduct(product._id)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-                <td>
-                  <router-link
-                    :to="{ path: '/updateProduct/' + product._id }"
-                    class="btn btn-dark"
-                  >
-                    <i class="bi bi-pencil-square"></i>
-                  </router-link>
+                  <div class="dropdown">
+                    <button
+                      class="btn btn-dark dropdown-toggle"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i class="bi bi-gear me-1"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a
+                          href="#"
+                          class="dropdown-item text-danger"
+                          @click="deleteProduct(product._id)"
+                          >Delete</a
+                        >
+                      </li>
+                      <li>
+                        <router-link
+                          :to="{ path: '/updateProduct/' + product._id }"
+                          class="dropdown-item"
+                          >Update</router-link
+                        >
+                      </li>
+                    </ul>
+                  </div>
                 </td>
               </tr>
             </transition-group>
