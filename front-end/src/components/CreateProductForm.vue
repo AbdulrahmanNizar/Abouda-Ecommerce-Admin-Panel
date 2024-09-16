@@ -14,7 +14,7 @@
       class="w-100 d-flex flex-row justify-content-start align-items-center row"
     >
       <transition name="fadeError" v-show="showErrorForCreateNewProduct">
-        <div class="alert alert-danger fade show" role="alert">
+        <div class="alert alert-danger fade show text-center" role="alert">
           {{ errorForCreateNewProduct }}
         </div>
       </transition>
@@ -265,7 +265,7 @@ const createProduct = async (): Promise<void> => {
         productPrice: formData.newProductPrice,
         productImage: formData.productPictureBase64,
         featuredProduct: featuredProduct.value,
-        archivdeProduct: archivedProduct.value,
+        archivedProduct: archivedProduct.value,
       }),
     };
 
