@@ -8,6 +8,7 @@ import Colors from "@/views/Colors.vue";
 import Products from "@/views/Products.vue";
 import CreateProduct from "@/views/CreateProduct.vue";
 import UpdateProduct from "@/views/UpdateProduct.vue";
+import Orders from "@/views/Orders.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -72,6 +73,14 @@ const routes: Array<RouteRecordRaw> = [
     name: "UpdateProduct",
     path: "/updateProduct/:productId",
     component: UpdateProduct,
+    meta: {
+      needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "Orders",
+    path: "/orders",
+    component: Orders,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },

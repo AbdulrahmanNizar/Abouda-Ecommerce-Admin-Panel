@@ -12,6 +12,7 @@ const store = createStore({
     currentStoreCategories: <any>[],
     currentStoreColors: <any>[],
     currentStoreProducts: <any>[],
+    currentStoreOrders: <any>[],
     userId: localStorage.getItem("UserId"),
     errorForCreateNewCategory: <string>"",
     showErrorForCreateNewCategory: <boolean>false,
@@ -418,6 +419,21 @@ const store = createStore({
         const data = await response.json();
         if (data.statusCode >= 200 && data.statusCode < 300) {
           window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async getCurrentStoreOrders(context, payload): Promise<void> {
+      try {
+        const response = await fetch(
+          `http://192.168.1.241:3000/orders/getOrders/${this.state.currentStoreId}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          this.state.currentStoreOrders = data.data;
         }
       } catch (err) {
         console.log(err);
