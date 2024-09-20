@@ -9,6 +9,7 @@ import Products from "@/views/Products.vue";
 import CreateProduct from "@/views/CreateProduct.vue";
 import UpdateProduct from "@/views/UpdateProduct.vue";
 import Orders from "@/views/Orders.vue";
+import OrderDetails from "@/views/OrderDetails.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -81,6 +82,14 @@ const routes: Array<RouteRecordRaw> = [
     name: "Orders",
     path: "/orders",
     component: Orders,
+    meta: {
+      needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "OrderDetails",
+    path: "/orderDetails/:orderId",
+    component: OrderDetails,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },
