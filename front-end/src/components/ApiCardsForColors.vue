@@ -16,7 +16,7 @@
     <input
       class="w-50 form-control text-center"
       ref="CreateCategoryUrl"
-      value="http://192.168.1.241:3000/colors/createColor"
+      value="http://192.168.100.75:3000/colors/createColor"
       readonly
     />
   </div>
@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteCategroyUrl"
-      value="http://192.168.1.241:3000/colors/deleteColor"
+      value="http://192.168.100.75:3000/colors/deleteColor"
       readonly
     />
   </div>
@@ -56,7 +56,7 @@
     <input
       class="w-50 form-control text-center"
       ref="GetCategoryUrl"
-      value="http://192.168.1.241:3000/color/getColors/:storeId"
+      value="http://192.168.100.75:3000/color/getColors/:storeId"
       readonly
     />
   </div>

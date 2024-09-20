@@ -270,7 +270,7 @@ const createProduct = async (): Promise<void> => {
     };
 
     const response = await fetch(
-      "http://192.168.1.241:3000/products/createProduct",
+      "http://192.168.100.75:3000/products/createProduct",
       requestOptions
     );
     const data = await response.json();
