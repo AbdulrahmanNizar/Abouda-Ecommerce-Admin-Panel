@@ -10,6 +10,7 @@ import { todayDate } from 'src/helpers/Date';
 import { currentTime } from 'src/helpers/Time';
 import { GetOrdersDto } from './dto/GetOrdersDto';
 import { DeleteOrderDto } from './dto/DeleteOrderDto';
+import { GetOrderDetailsDto } from './dto/GetOrderDetailsDto';
 
 @Injectable()
 export class OrdersService {
@@ -81,6 +82,24 @@ export class OrdersService {
       return {
         successMessage: 'Order deleted successfully',
         statusCode: 200,
+      };
+    } catch (err) {
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async getOrderDetails(
+    requestInfo: GetOrderDetailsDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      const orderInDB = await this.ordersModel.find({
+        _id: requestInfo.orderId,
+      });
+
+      return {
+        successMessage: 'Got the order details successfully',
+        statusCode: 200,
+        data: orderInDB,
       };
     } catch (err) {
       throw new HttpException(err, err.status);

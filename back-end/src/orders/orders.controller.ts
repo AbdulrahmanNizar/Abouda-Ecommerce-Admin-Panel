@@ -1,9 +1,18 @@
-import { Body, Controller, Delete, Get, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/CreateOrderDto';
 import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { GetOrdersDto } from './dto/GetOrdersDto';
 import { DeleteOrderDto } from './dto/DeleteOrderDto';
+import { GetOrderDetailsDto } from './dto/GetOrderDetailsDto';
 
 @Controller('orders')
 export class OrdersController {
@@ -17,9 +26,9 @@ export class OrdersController {
     res.status(201).json(await this.ordersService.createOrder(createOrderDto));
   }
 
-  @Get('/getOrders')
+  @Get('/getOrders/:storeId')
   async getOrders(
-    @Body() getOrdersDto: GetOrdersDto,
+    @Param() getOrdersDto: GetOrdersDto,
     @Res() res,
   ): Promise<SuccessResponseObjectDto | void> {
     res.status(200).json(await this.ordersService.getOrders(getOrdersDto));
@@ -31,5 +40,15 @@ export class OrdersController {
     @Res() res,
   ): Promise<SuccessResponseObjectDto | void> {
     res.status(200).json(await this.ordersService.deleteOrder(deleteOrderDto));
+  }
+
+  @Get('/getOrderDetails/:orderId')
+  async getOrderDetails(
+    @Param() getOrderDetailsDto: GetOrderDetailsDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(await this.ordersService.getOrderDetails(getOrderDetailsDto));
   }
 }

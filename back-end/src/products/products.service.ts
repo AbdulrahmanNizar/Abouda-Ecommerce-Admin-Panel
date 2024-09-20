@@ -9,24 +9,25 @@ import { currentTime } from 'src/helpers/Time';
 import { GetProductsDto } from './dto/GetProductsDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
 import { UpdateProductDto } from './dto/UpdateProductDto';
+import { GetProductDetailsDto } from './dto/GetProductDetailsDto';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectModel('Product') private readonly productModel: Model<Product>,
+    @InjectModel('Product') private readonly productsModel: Model<Product>,
   ) {}
   async createProduct(
     requestInfo: CreateProductDto,
   ): Promise<SuccessResponseObjectDto | void> {
     try {
-      const productInDB = await this.productModel.find({
+      const productInDB = await this.productsModel.find({
         productName: requestInfo.productName,
       });
 
       if (productInDB.length > 0) {
         throw new HttpException('The product name is already exist', 400);
       } else {
-        const newProduct = new this.productModel({
+        const newProduct = new this.productsModel({
           storeId: requestInfo.storeId,
           storeName: requestInfo.storeName,
           productPrice: requestInfo.productPrice - 1 + 0.99,
@@ -56,7 +57,7 @@ export class ProductsService {
     requestInfo: GetProductsDto,
   ): Promise<SuccessResponseObjectDto | void> {
     try {
-      const productsInDB = await this.productModel.find({
+      const productsInDB = await this.productsModel.find({
         storeId: requestInfo.storeId,
       });
 
@@ -74,7 +75,7 @@ export class ProductsService {
     requestInfo: DeleteProductDto,
   ): Promise<SuccessResponseObjectDto | void> {
     try {
-      await this.productModel.deleteOne({ _id: requestInfo.productId });
+      await this.productsModel.deleteOne({ _id: requestInfo.productId });
 
       return {
         successMessage: 'Product deleted successfully',
@@ -90,7 +91,7 @@ export class ProductsService {
   ): Promise<SuccessResponseObjectDto | void> {
     try {
       if (requestInfo.updatedProductImage != '') {
-        await this.productModel.updateOne(
+        await this.productsModel.updateOne(
           { _id: requestInfo.productId },
           {
             $set: {
@@ -111,7 +112,7 @@ export class ProductsService {
           statusCode: 200,
         };
       } else {
-        await this.productModel.updateOne(
+        await this.productsModel.updateOne(
           { _id: requestInfo.productId },
           {
             $set: {
@@ -131,6 +132,24 @@ export class ProductsService {
           statusCode: 200,
         };
       }
+    } catch (err) {
+      throw new HttpException(err, err.status);
+    }
+  }
+
+  async getProductDetails(
+    requestInfo: GetProductDetailsDto,
+  ): Promise<SuccessResponseObjectDto | void> {
+    try {
+      const productInDB = await this.productsModel.find({
+        _id: requestInfo.productId,
+      });
+
+      return {
+        successMessage: 'Got the product details successfully',
+        statusCode: 200,
+        data: productInDB,
+      };
     } catch (err) {
       throw new HttpException(err, err.status);
     }

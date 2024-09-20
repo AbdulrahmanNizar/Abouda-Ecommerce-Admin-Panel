@@ -16,6 +16,7 @@ import { SuccessResponseObjectDto } from 'src/dto/SuccessResponseObjectDto';
 import { GetProductsDto } from './dto/GetProductsDto';
 import { DeleteProductDto } from './dto/DeleteProductDto';
 import { UpdateProductDto } from './dto/UpdateProductDto';
+import { GetProductDetailsDto } from './dto/GetProductDetailsDto';
 
 @Controller('products')
 export class ProductsController {
@@ -62,5 +63,15 @@ export class ProductsController {
     res
       .status(200)
       .json(await this.productsService.updateProduct(updateProductDto));
+  }
+
+  @Get('/getProductDetails/:productId')
+  async getProductDetails(
+    @Param() getProductDetailsDto: GetProductDetailsDto,
+    @Res() res,
+  ): Promise<SuccessResponseObjectDto | void> {
+    res
+      .status(200)
+      .json(await this.productsService.getProductDetails(getProductDetailsDto));
   }
 }
