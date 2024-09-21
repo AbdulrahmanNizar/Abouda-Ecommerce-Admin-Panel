@@ -101,12 +101,12 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/products' }"
+              <router-link class="nav-link" :to="{ path: '/products' }"
                 >Products</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ path: '/orders' }"
+              <router-link class="nav-link active" :to="{ path: '/orders' }"
                 >Orders</router-link
               >
             </li>
@@ -129,6 +129,48 @@
         </div>
       </div>
     </nav>
+
+    <div
+      class="w-100 d-flex flex-row justify-content-center align-items-center mt-5 p-3"
+    >
+      <div
+        class="card shadow p-3"
+        style="width: 18rem"
+        v-for="product in productDetails"
+      >
+        <img
+          :src="product.productImage"
+          class="card-img-top"
+          alt="Product Image"
+        />
+        <div class="card-body">
+          <h6 class="card-title mb-0">
+            Product Name:
+            {{ product.productName }}
+          </h6>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            Product Price: ${{ product.productPrice }}
+          </li>
+          <li class="list-group-item">
+            Product Category: {{ product.productCategory }}
+          </li>
+          <li class="list-group-item">
+            Product Size: {{ product.productSize }}
+          </li>
+          <li class="list-group-item">
+            Product Color: {{ product.productColor }}
+          </li>
+          <li class="list-group-item">
+            Featured Product: {{ product.featuredProduct }}
+          </li>
+          <li class="list-group-item">
+            ِArchived Product: {{ product.archivedProduct }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
     <div
       class="modal fade"
@@ -202,10 +244,12 @@
 
 <script setup lang="ts">
 import { onMounted, computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import gsap from "gsap";
 
 const store = useStore();
+const route = useRoute();
 const searchStore = ref<string>("");
 const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
@@ -213,6 +257,8 @@ const newStoreName = ref<string>("");
 const newStoreAdmins = ref<any>([]);
 const requiredInputsErrorForStores = ref<string>("");
 const showRequiredInputsErrorForStores = ref<boolean>(false);
+const productId = route.params.productId;
+const productDetails = ref<any>([]);
 
 const yourStores = computed(() => {
   return store.state.yourStores;
@@ -233,6 +279,21 @@ onMounted(() => {
     }
   }
 });
+
+const getProductDetails = async (): Promise<void> => {
+  try {
+    const response = await fetch(
+      `http://192.168.100.75:3000/products/getProductDetails/${productId}`
+    );
+    const data = await response.json();
+
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      productDetails.value = data.data;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const manageThisStore = (storeId: string, storeName: string): void => {
   store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
@@ -295,4 +356,5 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
+getProductDetails();
 </script>

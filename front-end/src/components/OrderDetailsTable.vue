@@ -26,8 +26,6 @@
               <th scope="col">Price</th>
               <th scope="col">Date</th>
               <th scope="col">Time</th>
-              <th scope="col">Details</th>
-              <th scope="col">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -47,11 +45,11 @@
                     ></button>
                     <ul class="dropdown-menu">
                       <li>
-                        <a
-                          href="#"
+                        <router-link
                           class="dropdown-item"
                           v-for="product in order.orderedProducts"
-                          >{{ product }}</a
+                          :to="{ path: '/productDetails/' + product }"
+                          >{{ product }}</router-link
                         >
                       </li>
                     </ul>
@@ -60,18 +58,6 @@
                 <td>${{ order.orderedProductsPrices }}</td>
                 <td>{{ order.createdAtDate }}</td>
                 <td>{{ order.createdAtTime }}</td>
-                <td>
-                  <router-link
-                    :to="{ path: '/orderDetails/' + order._id }"
-                    class="btn btn-dark"
-                    ><i class="bi bi-info-circle"></i
-                  ></router-link>
-                </td>
-                <td>
-                  <button class="btn btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
               </tr>
             </transition-group>
           </tbody>
@@ -99,16 +85,6 @@
               <p class="mb-0">Created At Date: {{ order.createdAtDate }}</p>
               <hr class="w-100" />
               <p class="mb-0">Created At Time: {{ order.createdAtTime }}</p>
-              <hr class="w-100" />
-              <router-link
-                :to="{ path: '/orderDetails/' + order._id }"
-                class="btn btn-dark w-100"
-                ><i class="bi bi-info-circle"></i
-              ></router-link>
-
-              <button class="btn btn-danger w-100 mt-1">
-                <i class="bi bi-trash"></i>
-              </button>
               <hr class="w-100" />
             </div>
           </transition-group>
