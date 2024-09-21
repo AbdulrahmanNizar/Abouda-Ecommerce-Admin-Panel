@@ -10,6 +10,7 @@ import CreateProduct from "@/views/CreateProduct.vue";
 import UpdateProduct from "@/views/UpdateProduct.vue";
 import Orders from "@/views/Orders.vue";
 import OrderDetails from "@/views/OrderDetails.vue";
+import ProductDetails from "@/views/ProductDetails.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -90,6 +91,14 @@ const routes: Array<RouteRecordRaw> = [
     name: "OrderDetails",
     path: "/orderDetails/:orderId",
     component: OrderDetails,
+    meta: {
+      needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "ProductDetails",
+    path: "/productDetails/:productId",
+    component: ProductDetails,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },
