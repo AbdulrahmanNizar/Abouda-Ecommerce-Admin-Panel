@@ -15,7 +15,7 @@
 
     <input
       class="w-50 form-control text-center"
-      ref="CreateCategoryUrl"
+      ref="CreateSizeUrl"
       value="http://192.168.100.75:3000/sizes/createSize"
       readonly
     />
@@ -35,7 +35,7 @@
     <hr class="w-100" />
     <input
       class="w-50 form-control text-center"
-      ref="DeleteCategroyUrl"
+      ref="DeleteSizeUrl"
       value="http://192.168.100.75:3000/sizes/deleteSize/:userId/:sizeId"
       readonly
     />
@@ -55,7 +55,7 @@
     <hr class="w-100" />
     <input
       class="w-50 form-control text-center"
-      ref="GetCategoryUrl"
+      ref="GetSizeUrl"
       value="http://192.168.100.75:3000/sizes/getSizes/:storeId"
       readonly
     />
@@ -65,22 +65,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const CreateCategoryUrl = ref<any>();
-const GetCategoryUrl = ref<any>();
-const DeleteCategroyUrl = ref<any>();
+const CreateSizeUrl = ref<any>();
+const GetSizeUrl = ref<any>();
+const DeleteSizeUrl = ref<any>();
 
 const copyUrl = (selectedUrl: string): void => {
   switch (selectedUrl != "") {
     case selectedUrl == "CreateUrl":
-      CreateCategoryUrl.value.select();
+      CreateSizeUrl.value.select();
       document.execCommand("copy");
       break;
     case selectedUrl == "GetUrl":
-      GetCategoryUrl.value.select();
+      GetSizeUrl.value.select();
       document.execCommand("copy");
       break;
     case selectedUrl == "DeleteUrl":
-      DeleteCategroyUrl.value.select();
+      DeleteSizeUrl.value.select();
       document.execCommand("copy");
       break;
   }

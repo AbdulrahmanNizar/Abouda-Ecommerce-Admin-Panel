@@ -141,17 +141,6 @@
         </h3>
         <p class="text-start ms-2">Manage orders of your store</p>
       </div>
-      <div
-        class="d-flex flex-row justify-content-center align-items-center me-4"
-        style="width: 10%"
-      >
-        <router-link
-          :to="{ path: '/createProduct' }"
-          class="btn btn-dark text-center"
-        >
-          <i class="bi bi-plus"></i> Add New
-        </router-link>
-      </div>
     </div>
 
     <hr class="w-100" />
@@ -196,7 +185,10 @@
                   ></router-link>
                 </td>
                 <td>
-                  <button class="btn btn-danger">
+                  <button
+                    class="btn btn-danger"
+                    @click="deleteOrder(order._id)"
+                  >
                     <i class="bi bi-trash"></i>
                   </button>
                 </td>
@@ -233,8 +225,10 @@
                 class="btn btn-dark w-100"
                 ><i class="bi bi-info-circle"></i
               ></router-link>
-
-              <button class="btn btn-danger w-100 mt-1">
+              <button
+                class="btn btn-danger w-100 mt-1"
+                @click="deleteOrder(order._id)"
+              >
                 <i class="bi bi-trash"></i>
               </button>
               <hr class="w-100" />
@@ -250,10 +244,10 @@
       class="w-100 text-center d-flex flex-column justify-content-center align-items-center p-3"
     >
       <h3>Api Calls</h3>
-      <p>Api calls for products</p>
+      <p>Api calls for orders</p>
       <hr class="w-100" />
 
-      <ApiCardsForProducts />
+      <ApiCardsForOrders />
     </div>
 
     <div
@@ -330,7 +324,8 @@
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import ApiCardsForProducts from "@/components/ApiCardsForProducts.vue";
+import ApiCardsForOrders from "@/components/ApiCardsForOrders.vue";
+import { RequestOptionsType } from "@/types/requestOptionsType";
 
 const store = useStore();
 const searchStore = ref<string>("");
@@ -364,6 +359,30 @@ onMounted(() => {
     }
   }
 });
+
+const deleteOrder = async (orderId: string): Promise<void> => {
+  try {
+    const requestOptions: RequestOptionsType | any = {
+      method: "DELETE",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderId: orderId,
+      }),
+    };
+
+    const response = await fetch(
+      "http://192.168.100.75:3000/orders/deleteOrder",
+      requestOptions
+    );
+    const data = await response.json();
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      window.location.reload();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const manageThisStore = (storeId: string, storeName: string): void => {
   store.commit("manageThisStore", { storeName: storeName, storeId: storeId });

@@ -180,6 +180,7 @@
               <th scope="col">Category</th>
               <th scope="col">Color</th>
               <th scope="col">Size</th>
+              <th scope="col">Featured/Archived</th>
               <th scope="col">Date</th>
               <th scope="col">Settings</th>
             </tr>
@@ -197,6 +198,9 @@
                 <td>{{ product.productCategory }}</td>
                 <td>{{ product.productColor }}</td>
                 <td>{{ product.productSize }}</td>
+                <td>
+                  {{ product.featuredProduct }}/{{ product.archivedProduct }}
+                </td>
                 <td>{{ product.createdAtDate }}</td>
                 <td>
                   <div class="dropdown">

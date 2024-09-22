@@ -18,11 +18,13 @@
       >
         <table
           class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto d-md-table d-none"
-          v-if="currentStoreOrders.length > 0"
+          v-if="orderDetails.length > 0"
         >
           <thead>
             <tr>
-              <th scope="col">Ordered Products</th>
+              <th scope="col">User Id</th>
+              <th scope="col">Username</th>
+              <th scope="col">User Phone Number</th>
               <th scope="col">Price</th>
               <th scope="col">Date</th>
               <th scope="col">Time</th>
@@ -35,26 +37,10 @@
               @enter="onEnter"
               @leave="onLeave"
             >
-              <tr v-for="order in currentStoreOrders">
-                <th scope="row">
-                  <div class="dropdown">
-                    <button
-                      class="btn btn-dark dropdown-toggle"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    ></button>
-                    <ul class="dropdown-menu">
-                      <li>
-                        <router-link
-                          class="dropdown-item"
-                          v-for="product in order.orderedProducts"
-                          :to="{ path: '/productDetails/' + product }"
-                          >{{ product }}</router-link
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </th>
+              <tr v-for="order in orderDetails">
+                <th scope="row">{{ order.userId }}</th>
+                <td>{{ order.userName }}</td>
+                <td>{{ order.userPhoneNumber }}</td>
                 <td>${{ order.orderedProductsPrices }}</td>
                 <td>{{ order.createdAtDate }}</td>
                 <td>{{ order.createdAtTime }}</td>
@@ -74,9 +60,13 @@
           >
             <div
               class="w-100 p-3 d-flex flex-column justify-content-center align-items-center border border-muted rounded mt-1"
-              v-for="order in currentStoreOrders"
+              v-for="order in orderDetails"
             >
-              <p class="mb-0">Order Id: {{ order._id }}</p>
+              <p class="mb-0">User Id: {{ order.userId }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">User Name: {{ order.userName }}</p>
+              <hr class="w-100" />
+              <p class="mb-0">User Phone Number: {{ order.userPhoneNumber }}</p>
               <hr class="w-100" />
               <p class="mb-0">
                 Order Price: ${{ order.orderedProductsPrices }}
@@ -89,6 +79,27 @@
             </div>
           </transition-group>
         </div>
+
+        <hr class="w-100 mt-3" />
+
+        <div
+          class="w-100 mt-1 p-2 d-flex flex-column justify-content-center align-items-center"
+        >
+          <h3>Ordered Products</h3>
+        </div>
+
+        <hr class="w-100" />
+      </div>
+
+      <div
+        class="w-100 d-flex flex-row row p-3 justify-content-around align-items-center"
+        v-for="order in orderDetails"
+      >
+        <ProductCard
+          class="col-md-3 col-6"
+          v-for="productId in order.orderedProducts"
+          :productId="productId"
+        />
       </div>
     </div>
   </div>
@@ -99,15 +110,13 @@ import { useRoute } from "vue-router";
 import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
+import ProductCard from "@/components/ProductCard.vue";
 
 const store = useStore();
 const searchStore = ref<string>("");
 const route = useRoute();
 const orderId = ref<string | any>(route.params.orderId);
-
-const currentStoreOrders = computed(() => {
-  return store.state.currentStoreOrders;
-});
+const orderDetails = ref<any>([]);
 
 const yourStores = computed(() => {
   return store.state.yourStores;
@@ -129,8 +138,19 @@ onMounted(() => {
   }
 });
 
-const getCurrentStoreOrders = async (): Promise<void> => {
-  store.dispatch("getCurrentStoreOrders");
+const getOrderDetails = async (): Promise<void> => {
+  try {
+    const response = await fetch(
+      `http://192.168.100.75:3000/orders/getOrderDetails/${orderId.value}`
+    );
+    const data = await response.json();
+
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      orderDetails.value = data.data;
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 function onBeforeEnter(el: any) {
@@ -156,5 +176,5 @@ function onLeave(el: any, done: any) {
   });
 }
 
-getCurrentStoreOrders();
+getOrderDetails();
 </script>

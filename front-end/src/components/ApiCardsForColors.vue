@@ -15,7 +15,7 @@
 
     <input
       class="w-50 form-control text-center"
-      ref="CreateCategoryUrl"
+      ref="CreateColorUrl"
       value="http://192.168.100.75:3000/colors/createColor"
       readonly
     />
@@ -35,7 +35,7 @@
     <hr class="w-100" />
     <input
       class="w-50 form-control text-center"
-      ref="DeleteCategroyUrl"
+      ref="DeleteColorUrl"
       value="http://192.168.100.75:3000/colors/deleteColor"
       readonly
     />
@@ -55,7 +55,7 @@
     <hr class="w-100" />
     <input
       class="w-50 form-control text-center"
-      ref="GetCategoryUrl"
+      ref="GetColorsUrl"
       value="http://192.168.100.75:3000/color/getColors/:storeId"
       readonly
     />
@@ -65,22 +65,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const CreateCategoryUrl = ref<any>();
-const GetCategoryUrl = ref<any>();
-const DeleteCategroyUrl = ref<any>();
+const CreateColorUrl = ref<any>();
+const GetColorsUrl = ref<any>();
+const DeleteColorUrl = ref<any>();
 
 const copyUrl = (selectedUrl: string): void => {
   switch (selectedUrl != "") {
     case selectedUrl == "CreateUrl":
-      CreateCategoryUrl.value.select();
+      CreateColorUrl.value.select();
       document.execCommand("copy");
       break;
     case selectedUrl == "GetUrl":
-      GetCategoryUrl.value.select();
+      GetColorsUrl.value.select();
       document.execCommand("copy");
       break;
     case selectedUrl == "DeleteUrl":
-      DeleteCategroyUrl.value.select();
+      DeleteColorUrl.value.select();
       document.execCommand("copy");
       break;
   }

@@ -95,14 +95,6 @@ const routes: Array<RouteRecordRaw> = [
       needsToken: localStorage.getItem("JwtToken") ? false : true,
     },
   },
-  {
-    name: "ProductDetails",
-    path: "/productDetails/:productId",
-    component: ProductDetails,
-    meta: {
-      needsToken: localStorage.getItem("JwtToken") ? false : true,
-    },
-  },
 ];
 
 const router = createRouter({
