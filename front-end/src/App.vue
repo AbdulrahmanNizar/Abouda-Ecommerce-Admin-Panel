@@ -29,7 +29,7 @@ onMounted(async (): Promise<void> => {
       };
 
       const response = await fetch(
-        "http://192.168.100.75:3000/registration/validateTheAuthToken",
+        "http://192.168.1.241:3000/registration/validateTheAuthToken",
         requestOptions
       );
       const data = await response.json();

@@ -16,7 +16,7 @@
     <input
       class="w-50 form-control text-center"
       ref="CreateOrderUrl"
-      value="http://192.168.100.75:3000/orders/createOrder"
+      value="http://192.168.1.241:3000/orders/createOrder"
       readonly
     />
   </div>
@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteOrderUrl"
-      value="http://192.168.100.75:3000/orders/deleteOrder"
+      value="http://192.168.1.241:3000/orders/deleteOrder"
       readonly
     />
   </div>
@@ -56,7 +56,7 @@
     <input
       class="w-50 form-control text-center"
       ref="GetOrdersUrl"
-      value="http://192.168.100.75:3000/orders/getOrders/:storeId"
+      value="http://192.168.1.241:3000/orders/getOrders/:storeId"
       readonly
     />
   </div>

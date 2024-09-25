@@ -16,7 +16,7 @@
     <input
       class="w-50 form-control text-center"
       ref="CreateProductUrl"
-      value="http://192.168.100.75:3000/products/createProduct"
+      value="http://192.168.1.241:3000/products/createProduct"
       readonly
     />
   </div>
@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteProductUrl"
-      value="http://192.168.100.75:3000/products/deleteProduct"
+      value="http://192.168.1.241:3000/products/deleteProduct"
       readonly
     />
   </div>
@@ -56,7 +56,7 @@
     <input
       class="w-50 form-control text-center"
       ref="GetProductsUrl"
-      value="http://192.168.100.75:3000/products/getProducts/:storeId"
+      value="http://192.168.1.241:3000/products/getProducts/:storeId"
       readonly
     />
   </div>
@@ -76,7 +76,7 @@
     <input
       class="w-50 form-control text-center"
       ref="PatchProductUrl"
-      value="http://192.168.100.75:3000/products/updateProduct"
+      value="http://192.168.1.241:3000/products/updateProduct"
       readonly
     />
   </div>

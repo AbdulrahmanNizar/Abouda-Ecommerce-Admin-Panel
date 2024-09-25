@@ -56,13 +56,8 @@
             </transition-group>
             <li><hr class="dropdown-divider" /></li>
             <li>
-              <a
-                href="#"
-                class="dropdown-item"
-                data-bs-toggle="modal"
-                data-bs-target="#createNewStoreModal"
-              >
-                <i class="bi bi-plus-circle me-1"></i> Add New</a
+              <router-link class="dropdown-item" :to="{ path: '/createStore' }"
+                ><i class="bi bi-plus-circle me-1"></i> Add New</router-link
               >
             </li>
           </ul>
@@ -164,63 +159,6 @@
         <h2 class="fw-bold">{{ currentStoreProducts.length }}</h2>
       </div>
     </div>
-
-    <div
-      class="modal fade"
-      id="createNewStoreModal"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      tabindex="-1"
-      aria-labelledby="staticBackdropLabel1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel1">
-              Create New Store
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <label for="#newStoreNameInt" class="form-label"
-              >New Store Name</label
-            >
-            <input
-              id="newStoreNameInt"
-              class="form-control mt-1"
-              type="text"
-              v-model="newStoreName"
-              placeholder="Enter A Name For The New Store"
-            />
-            <hr class="w-100" />
-            <label for="#newStoreAdminsInt" class="form-label"
-              >New Store Admins</label
-            >
-            <input
-              id="newStoreAdminsInt"
-              type="text"
-              class="form-control mt-1"
-              placeholder="Add , Between The Names"
-              v-model="newStoreAdmins"
-            />
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              Close
-            </button>
-            <button type="button" class="btn btn-dark" @click="createNewStore">
-              Create
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -266,13 +204,6 @@ const yourComputedStores = computed(() => {
     store.storeName.toLowerCase().includes(searchStore.value)
   );
 });
-
-const createNewStore = async (): Promise<void> => {
-  store.dispatch("createNewStore", {
-    newStoreName: newStoreName.value,
-    newStoreAdmins: newStoreAdmins.value,
-  });
-};
 
 const getYourStores = async (): Promise<void> => {
   store.dispatch("getYourStores");

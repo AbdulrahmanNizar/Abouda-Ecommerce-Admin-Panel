@@ -104,7 +104,7 @@ const login = async () => {
 
     try {
       const response = await fetch(
-        "http://192.168.100.75:3000/registration/login",
+        "http://192.168.1.241:3000/registration/login",
         requestOptions
       );
       const data = await response.json();

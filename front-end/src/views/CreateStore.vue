@@ -101,7 +101,7 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link active" :to="{ path: '/orders' }"
+              <router-link class="nav-link" :to="{ path: '/orders' }"
                 >Orders</router-link
               >
             </li>
@@ -126,34 +126,25 @@
     </nav>
 
     <Suspense>
-      <OrderDetailsTable />
+      <CreateStoreForm />
     </Suspense>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import OrderDetailsTable from "@/components/OrderDetailsTable.vue";
+import CreateStoreForm from "@/components/CreateStoreForm.vue";
 
 const store = useStore();
-const searchStore = ref<string>("");
-const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
+const userId = ref<string | null>(localStorage.getItem("UserId"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
-const newStoreName = ref<string>("");
-const newStoreAdmins = ref<any>([]);
-const requiredInputsErrorForStores = ref<string>("");
-const showRequiredInputsErrorForStores = ref<boolean>(false);
+const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
+const searchStore = ref<string>("");
 
 const yourStores = computed(() => {
   return store.state.yourStores;
-});
-
-const yourComputedStores = computed(() => {
-  return yourStores.value.filter((store: any) =>
-    store.storeName.toLowerCase().includes(searchStore.value)
-  );
 });
 
 onMounted(() => {
@@ -166,20 +157,22 @@ onMounted(() => {
   }
 });
 
-const manageThisStore = (storeId: string, storeName: string): void => {
-  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
-};
+const yourComputedStores = computed(() => {
+  return yourStores.value.filter((store: any) =>
+    store.storeName.toLowerCase().includes(searchStore.value)
+  );
+});
 
 const getYourStores = async (): Promise<void> => {
   store.dispatch("getYourStores");
 };
 
-const getYourStoreInformation = async (): Promise<void> => {
-  store.dispatch("getYourStoreInformation");
-};
-
 const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
+};
+
+const manageThisStore = (storeId: string, storeName: string) => {
+  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
 };
 
 const logout = async (): Promise<void> => {
@@ -210,5 +203,4 @@ function onLeave(el: any, done: any) {
 }
 
 getYourStores();
-getYourStoreInformation();
 </script>

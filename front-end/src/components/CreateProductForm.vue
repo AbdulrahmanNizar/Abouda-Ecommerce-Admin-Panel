@@ -18,6 +18,7 @@
           {{ errorForCreateNewProduct }}
         </div>
       </transition>
+
       <div
         class="d-flex flex-column justify-content-start align-items-start mt-3 p-2 col-md-4 col-6"
       >
@@ -270,7 +271,7 @@ const createProduct = async (): Promise<void> => {
     };
 
     const response = await fetch(
-      "http://192.168.100.75:3000/products/createProduct",
+      "http://192.168.1.241:3000/products/createProduct",
       requestOptions
     );
     const data = await response.json();

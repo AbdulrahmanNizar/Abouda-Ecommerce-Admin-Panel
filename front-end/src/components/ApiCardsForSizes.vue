@@ -16,7 +16,7 @@
     <input
       class="w-50 form-control text-center"
       ref="CreateSizeUrl"
-      value="http://192.168.100.75:3000/sizes/createSize"
+      value="http://192.168.1.241:3000/sizes/createSize"
       readonly
     />
   </div>
@@ -36,7 +36,7 @@
     <input
       class="w-50 form-control text-center"
       ref="DeleteSizeUrl"
-      value="http://192.168.100.75:3000/sizes/deleteSize/:userId/:sizeId"
+      value="http://192.168.1.241:3000/sizes/deleteSize/:userId/:sizeId"
       readonly
     />
   </div>
@@ -56,7 +56,7 @@
     <input
       class="w-50 form-control text-center"
       ref="GetSizeUrl"
-      value="http://192.168.100.75:3000/sizes/getSizes/:storeId"
+      value="http://192.168.1.241:3000/sizes/getSizes/:storeId"
       readonly
     />
   </div>

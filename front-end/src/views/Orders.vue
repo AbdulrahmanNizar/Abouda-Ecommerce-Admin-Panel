@@ -56,13 +56,8 @@
             </transition-group>
             <li><hr class="dropdown-divider" /></li>
             <li>
-              <a
-                href="#"
-                class="dropdown-item"
-                data-bs-toggle="modal"
-                data-bs-target="#createNewStoreModal"
-              >
-                <i class="bi bi-plus-circle me-1"></i> Add New</a
+              <router-link class="dropdown-item" :to="{ path: '/createStore' }"
+                ><i class="bi bi-plus-circle me-1"></i> Add New</router-link
               >
             </li>
           </ul>
@@ -249,74 +244,6 @@
 
       <ApiCardsForOrders />
     </div>
-
-    <div
-      class="modal fade"
-      id="createNewStoreModal"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      tabindex="-1"
-      aria-labelledby="staticBackdropLabel1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel1">
-              Create New Store
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <transition
-              name="fadeError"
-              v-show="showRequiredInputsErrorForStores"
-            >
-              <div
-                class="alert alert-danger fade show w-100 text-center"
-                role="alert"
-              >
-                {{ requiredInputsErrorForStores }}
-              </div>
-            </transition>
-            <label for="#newStoreNameInt" class="form-label"
-              >New Store Name</label
-            >
-            <input
-              id="newStoreNameInt"
-              class="form-control mt-1"
-              type="text"
-              v-model="newStoreName"
-              placeholder="Enter A Name For The New Store"
-            />
-            <hr class="w-100" />
-            <label for="#newStoreAdminsInt" class="form-label"
-              >New Store Admins</label
-            >
-            <input
-              id="newStoreAdminsInt"
-              type="text"
-              class="form-control mt-1"
-              placeholder="Add , Between The Names"
-              v-model="newStoreAdmins"
-            />
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              Close
-            </button>
-            <button type="button" class="btn btn-dark" @click="createNewStore">
-              Create
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -372,7 +299,7 @@ const deleteOrder = async (orderId: string): Promise<void> => {
     };
 
     const response = await fetch(
-      "http://192.168.100.75:3000/orders/deleteOrder",
+      "http://192.168.1.241:3000/orders/deleteOrder",
       requestOptions
     );
     const data = await response.json();
@@ -394,22 +321,6 @@ const getYourStores = async (): Promise<void> => {
 
 const getYourStoreInformation = async (): Promise<void> => {
   store.dispatch("getYourStoreInformation");
-};
-
-const createNewStore = async (): Promise<void> => {
-  if (newStoreName.value != "" && newStoreAdmins.value != "") {
-    store.dispatch("createNewStore", {
-      newStoreName: newStoreName.value,
-      newStoreAdmins: newStoreAdmins.value,
-    });
-  } else {
-    requiredInputsErrorForStores.value = "The inputs are required";
-    showRequiredInputsErrorForStores.value = true;
-
-    setTimeout(() => {
-      showRequiredInputsErrorForStores.value = false;
-    }, 3000);
-  }
 };
 
 const deleteStore = async (storeId: string): Promise<void> => {

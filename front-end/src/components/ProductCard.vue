@@ -43,7 +43,7 @@ const productDetails = ref<any>([]);
 const getProductDetails = async (): Promise<void> => {
   try {
     const response = await fetch(
-      `http://192.168.100.75:3000/products/getProductDetails/${props.productId}`
+      `http://192.168.1.241:3000/products/getProductDetails/${props.productId}`
     );
     const data = await response.json();
 

@@ -31,58 +31,10 @@ const store = createStore({
     },
   },
   actions: {
-    async createNewStore(
-      context,
-      { newStoreName, newStoreAdmins }
-    ): Promise<void> {
-      if (newStoreName != "" && newStoreAdmins != "") {
-        const newStoreAdminsInArr: string[] = newStoreAdmins.split(",");
-        const newStoreAdminsIdInArr: string[] = [];
-
-        for (let i = 0; i < newStoreAdminsInArr.length; i++) {
-          try {
-            const response = await fetch(
-              `http://192.168.100.75:3000/users-management/getUserInfo/${newStoreAdminsInArr[i]}`
-            );
-            const data = await response.json();
-
-            if (data.statusCode >= 200 && data.statusCode < 300) {
-              newStoreAdminsIdInArr.push(data.data.userId);
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        }
-
-        try {
-          const requestOptions: RequestOptionsType | any = {
-            method: "POST",
-            mode: "cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              storeName: newStoreName,
-              storeAdmins: newStoreAdminsIdInArr,
-            }),
-          };
-
-          const response = await fetch(
-            "http://192.168.100.75:3000/stores-management/createStore",
-            requestOptions
-          );
-          const data = await response.json();
-          if (data.statusCode >= 200 && data.statusCode < 300) {
-            window.location.reload();
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    },
-
     async getYourStores(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/stores-management/getStores/${this.state.userId}`
+          `http://192.168.1.241:3000/stores-management/getStores/${this.state.userId}`
         );
         const data: any = await response.json();
 
@@ -101,7 +53,7 @@ const store = createStore({
     async getYourStoreInformation(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/stores-management/getStoreDetails/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/stores-management/getStoreDetails/${this.state.currentStoreId}`
         );
         const data = await response.json();
 
@@ -130,7 +82,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/stores-management/updateStore",
+          "http://192.168.1.241:3000/stores-management/updateStore",
           requestOptions
         );
         const data = await response.json();
@@ -154,7 +106,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/stores-management/deleteStore",
+          "http://192.168.1.241:3000/stores-management/deleteStore",
           requestOptions
         );
         const data = await response.json();
@@ -172,7 +124,7 @@ const store = createStore({
     async getCurrentStoreCategories(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/categories/getCategories/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/categories/getCategories/${this.state.currentStoreId}`
         );
         const data = await response.json();
 
@@ -199,7 +151,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/categories/createCategory",
+          "http://192.168.1.241:3000/categories/createCategory",
           requestOptions
         );
         const data = await response.json();
@@ -231,7 +183,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          `http://192.168.100.75:3000/categories/deleteCategory/${categoryId}`,
+          `http://192.168.1.241:3000/categories/deleteCategory/${categoryId}`,
           requestOptions
         );
         const data = await response.json();
@@ -246,7 +198,7 @@ const store = createStore({
     async getSizes(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/sizes/getSizes/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/sizes/getSizes/${this.state.currentStoreId}`
         );
         const data = await response.json();
 
@@ -273,7 +225,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/sizes/createSize",
+          "http://192.168.1.241:3000/sizes/createSize",
           requestOptions
         );
         const data = await response.json();
@@ -305,7 +257,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          `http://192.168.100.75:3000/sizes/deleteSize/${this.state.userId}/${sizeId}`,
+          `http://192.168.1.241:3000/sizes/deleteSize/${this.state.userId}/${sizeId}`,
           requestOptions
         );
         const data = await response.json();
@@ -320,7 +272,7 @@ const store = createStore({
     async getColors(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/colors/getColors/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/colors/getColors/${this.state.currentStoreId}`
         );
         const data = await response.json();
 
@@ -347,7 +299,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/colors/createColor",
+          "http://192.168.1.241:3000/colors/createColor",
           requestOptions
         );
         const data = await response.json();
@@ -373,7 +325,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/colors/deleteColor",
+          "http://192.168.1.241:3000/colors/deleteColor",
           requestOptions
         );
         const data = await response.json();
@@ -388,7 +340,7 @@ const store = createStore({
     async getCurrentStoreProducts(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/products/getProducts/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/products/getProducts/${this.state.currentStoreId}`
         );
         const data = await response.json();
         if (data.statusCode >= 200 && data.statusCode < 300) {
@@ -413,7 +365,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          "http://192.168.100.75:3000/products/deleteProduct",
+          "http://192.168.1.241:3000/products/deleteProduct",
           requestOptions
         );
         const data = await response.json();
@@ -428,7 +380,7 @@ const store = createStore({
     async getCurrentStoreOrders(context, payload): Promise<void> {
       try {
         const response = await fetch(
-          `http://192.168.100.75:3000/orders/getOrders/${this.state.currentStoreId}`
+          `http://192.168.1.241:3000/orders/getOrders/${this.state.currentStoreId}`
         );
         const data = await response.json();
 
@@ -449,7 +401,7 @@ const store = createStore({
         };
 
         const response = await fetch(
-          `http://192.168.100.75:3000/registration/logout/${this.state.userId}`,
+          `http://192.168.1.241:3000/registration/logout/${this.state.userId}`,
           requestOptions
         );
         const data = await response.json();

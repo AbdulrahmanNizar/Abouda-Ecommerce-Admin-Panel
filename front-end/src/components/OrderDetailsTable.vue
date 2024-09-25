@@ -141,7 +141,7 @@ onMounted(() => {
 const getOrderDetails = async (): Promise<void> => {
   try {
     const response = await fetch(
-      `http://192.168.100.75:3000/orders/getOrderDetails/${orderId.value}`
+      `http://192.168.1.241:3000/orders/getOrderDetails/${orderId.value}`
     );
     const data = await response.json();
 
