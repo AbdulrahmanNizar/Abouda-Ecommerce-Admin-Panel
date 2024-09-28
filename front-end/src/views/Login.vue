@@ -21,29 +21,58 @@
             </div>
           </transition>
 
-          <label for="#emailInt" class="form-label my-2">Email</label>
-          <input
-            id="emailInt"
-            type="email"
-            placeholder="Enter Your Email"
-            class="form-control"
-            v-model="formData.email"
-          />
-          <span v-for="error in v$.email.$errors" class="text-danger mt-1">{{
-            error.$message
-          }}</span>
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
+          >
+            <label for="#emailInt" class="form-label my-2">Email</label>
+            <div
+              class="w-100 d-flex flex-row justify-content-center align-items-center input-group"
+            >
+              <span class="input-group-text" id="emailSymbol">@</span>
+              <input
+                id="emailInt"
+                type="email"
+                placeholder="Enter Your Email"
+                class="form-control"
+                aria-describedby="#emailSymbol"
+                v-model="formData.email"
+              />
+            </div>
+            <span v-for="error in v$.email.$errors" class="text-danger mt-1">{{
+              error.$message
+            }}</span>
+          </div>
 
-          <label for="#passwordInt" class="form-label my-2">Password</label>
-          <input
-            id="passwordInt"
-            type="password"
-            placeholder="Enter Your Password"
-            class="form-control"
-            v-model="formData.password"
-          />
-          <span v-for="error in v$.password.$errors" class="text-danger mt-1">{{
-            error.$message
-          }}</span>
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
+          >
+            <label for="#passwordInt" class="form-label my-2">Password</label>
+            <div
+              class="w-100 d-flex flex-row justify-content-center align-items-center input-group"
+            >
+              <span class="input-group-text" id="passwordSymbol"
+                ><i class="bi bi-key"></i
+              ></span>
+              <input
+                id="passwordInt"
+                type="password"
+                placeholder="Enter Your Password"
+                class="form-control"
+                aria-describedby="#passwordSymbol"
+                v-model="formData.password"
+                ref="passwordInput"
+              />
+              <button class="btn btn-dark" @click="showPasswordOrHide">
+                <i class="bi bi-eye" v-if="showPassword"></i>
+                <i class="bi bi-eye-slash" v-else="showPassword"></i>
+              </button>
+            </div>
+            <span
+              v-for="error in v$.password.$errors"
+              class="text-danger mt-1"
+              >{{ error.$message }}</span
+            >
+          </div>
 
           <button class="btn btn-dark mt-4 mb-2 w-100" @click="login">
             Login
@@ -65,6 +94,8 @@ import NavBar from "@/components/NavBar.vue";
 const router = useRouter();
 const errorWrongEmailOrPassword = ref<string>("");
 const showErrorWrongEmailOrPassword = ref<boolean>(false);
+const passwordInput = ref<any>();
+const showPassword = ref<boolean>(false);
 
 onMounted(() => {
   const JwtToken = localStorage.getItem("JwtToken");
@@ -86,9 +117,14 @@ const formRules = computed(() => {
   };
 });
 
+const showPasswordOrHide = (): void => {
+  showPassword.value = !showPassword.value;
+  passwordInput.value.type = showPassword.value == false ? "password" : "text";
+};
+
 const v$ = useVuelidate(formRules, formData);
 
-const login = async () => {
+const login = async (): Promise<void> => {
   const validationResult = await v$.value.$validate();
 
   if (validationResult == true) {

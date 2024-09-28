@@ -18,14 +18,15 @@
         <input
           id="storeName"
           type="text"
-          placeholder="New Product Name"
+          placeholder="New Store Name"
           class="form-control"
+          v-model="formData.newStoreName"
         />
-        <!-- <span
-          v-for="error in v$.newProductName.$errors"
+        <span
+          v-for="error in v$.newStoreName.$errors"
           class="text-danger mt-1 ms-2"
           >{{ error.$message }}</span
-        > -->
+        >
       </div>
       <div
         class="d-flex flex-column justify-content-start align-items-start mt-3 p-2 col-md-4 col-6"
@@ -34,42 +35,74 @@
         <input
           id="storeAdmins"
           type="text"
-          placeholder="New Product Price"
+          placeholder="Add , Between Admins Names"
           class="form-control"
+          v-model="formData.newStoreAdmins"
         />
-        <!-- <span
-          v-for="error in v$.newProductPrice.$errors"
+        <span
+          v-for="error in v$.newStoreAdmins.$errors"
           class="text-danger mt-1 ms-2"
           >{{ error.$message }}</span
-        > -->
+        >
       </div>
+    </div>
+
+    <hr class="w-100" />
+
+    <div
+      class="w-100 d-flex flex-row justify-content-center align-items-center"
+    >
+      <button class="btn btn-dark w-50 mt-2" @click="createNewStore">
+        Create
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useStore } from "vuex";
+import { ref, reactive, computed } from "vue";
+import { useRouter } from "vue-router";
+import { required } from "@vuelidate/validators";
+import useVuelidate from "@vuelidate/core";
 
-const store = useStore();
-const newStoreName = ref<string>("");
-const newStoreAdmins = ref<any>([]);
-const requiredInputsErrorForStores = ref<string>("");
-const showRequiredInputsErrorForStores = ref<boolean>(false);
+const router = useRouter();
+
+const formData = reactive({
+  newStoreName: "",
+  newStoreAdmins: "",
+});
+
+const formRules = computed(() => {
+  return {
+    newStoreName: { required },
+    newStoreAdmins: { required },
+  };
+});
+
+const v$ = useVuelidate(formRules, formData);
 
 const createNewStore = async (): Promise<void> => {
-  if (newStoreName.value != "" && newStoreAdmins.value != "") {
-    store.dispatch("createNewStore", {
-      newStoreName: newStoreName.value,
-      newStoreAdmins: newStoreAdmins.value,
-    });
-  } else {
-    requiredInputsErrorForStores.value = "The inputs are required";
-    showRequiredInputsErrorForStores.value = true;
+  try {
+    const validationResult = await v$.value.$validate();
 
-    setTimeout(() => {
-      showRequiredInputsErrorForStores.value = false;
-    }, 3000);
+    if (validationResult) {
+      const storeAdminsInArr: string[] = formData.newStoreAdmins.split(",");
+      const storeAdminsIdInArr: string[] = [];
+
+      for (let i = 0; i < storeAdminsInArr.length; i++) {
+        const response = await fetch(
+          `http://192.168.1.241:3000/users-management/getUserInfo/${storeAdminsInArr[i]}`
+        );
+        const data = await response.json();
+
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          storeAdminsIdInArr.push(data.data.userId);
+        } else {
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 </script>

@@ -23,57 +23,118 @@
               {{ errorMessageForAlreadyExistUsername }}
             </div>
           </transition>
-          <label for="#usernameInt" class="form-label mb-2">Username</label>
-          <input
-            id="usernameInt"
-            type="text"
-            placeholder="Enter Your Username"
-            class="form-control"
-            v-model="formData.username"
-          />
-          <span v-for="error in v$.username.$errors" class="text-danger mt-1">{{
-            error.$message
-          }}</span>
 
-          <label for="#emailInt" class="form-label my-2">Email</label>
-          <input
-            id="emailInt"
-            type="email"
-            placeholder="Enter Your Email"
-            class="form-control"
-            v-model="formData.email"
-          />
-          <span v-for="error in v$.email.$errors" class="text-danger mt-1">{{
-            error.$message
-          }}</span>
-
-          <label for="#passwordInt" class="form-label my-2">Password</label>
-          <input
-            id="passwordInt"
-            type="password"
-            placeholder="Enter Your Password"
-            class="form-control"
-            v-model="formData.password"
-          />
-          <span v-for="error in v$.password.$errors" class="text-danger mt-1">{{
-            error.$message
-          }}</span>
-
-          <label for="#confirmPasswordInt" class="form-label my-2"
-            >Confirm Password</label
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
           >
-          <input
-            id="confirmPasswordInt"
-            type="password"
-            placeholder="Confirm Your Password"
-            class="form-control"
-            v-model="formData.confirmPassword"
-          />
-          <span
-            v-for="error in v$.confirmPassword.$errors"
-            class="text-danger mt-1"
-            >{{ error.$message }}</span
+            <label for="#usernameInt" class="form-label mb-2">Username</label>
+            <div
+              class="input-group w-100 d-flex flex-row justify-content-center align-items-center"
+            >
+              <span class="input-group-text" id="userSymbol"
+                ><i class="bi bi-person"></i
+              ></span>
+              <input
+                id="usernameInt"
+                type="text"
+                placeholder="Enter Your Username"
+                class="form-control"
+                aria-describedby="#userSymbol"
+                v-model="formData.username"
+              />
+            </div>
+            <span
+              v-for="error in v$.username.$errors"
+              class="text-danger mt-1"
+              >{{ error.$message }}</span
+            >
+          </div>
+
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
           >
+            <label for="#emailInt" class="form-label my-2">Email</label>
+            <div
+              class="w-100 d-flex flex-row justify-content-center align-items-center input-group"
+            >
+              <span class="input-group-text" id="emailSymbol">@</span>
+              <input
+                id="emailInt"
+                type="email"
+                placeholder="Enter Your Email"
+                class="form-control"
+                aria-describedby="#emailSymbol"
+                v-model="formData.email"
+              />
+            </div>
+            <span v-for="error in v$.email.$errors" class="text-danger mt-1">{{
+              error.$message
+            }}</span>
+          </div>
+
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
+          >
+            <label for="#passwordInt" class="form-label my-2">Password</label>
+            <div
+              class="w-100 d-flex flex-row justify-content-center align-items-center input-group"
+            >
+              <span class="input-group-text" id="passwordSymbol"
+                ><i class="bi bi-key"></i
+              ></span>
+              <input
+                id="passwordInt"
+                type="password"
+                placeholder="Enter Your Password"
+                class="form-control"
+                ref="passwordInput"
+                aria-describedby="#passwordSymbol"
+                v-model="formData.password"
+              />
+              <button class="btn btn-dark" @click="showPasswordOrHide">
+                <i class="bi bi-eye" v-if="showPassword"></i>
+                <i class="bi bi-eye-slash" v-else="showPassword"></i>
+              </button>
+            </div>
+            <span
+              v-for="error in v$.password.$errors"
+              class="text-danger mt-1"
+              >{{ error.$message }}</span
+            >
+          </div>
+
+          <div
+            class="w-100 d-flex flex-column justify-content-start align-items-start"
+          >
+            <label for="#confirmPasswordInt" class="form-label my-2"
+              >Confirm Password</label
+            >
+            <div
+              class="w-100 input-group d-flex flex-row justify-content-center align-items-center"
+            >
+              <span class="input-group-text" id="confirmPasswordSymbol"
+                ><i class="bi bi-key"></i
+              ></span>
+              <input
+                id="confirmPasswordInt"
+                type="password"
+                placeholder="Confirm Your Password"
+                class="form-control"
+                ref="confirmPasswordInput"
+                aria-describedby="#confirmPasswordSymbol"
+                v-model="formData.confirmPassword"
+              />
+              <button class="btn btn-dark" @click="showConfirmPasswordOrHide">
+                <i class="bi bi-eye" v-if="showConfirmPassword"></i>
+                <i class="bi bi-eye-slash" v-else="showConfirmPassword"></i>
+              </button>
+            </div>
+            <span
+              v-for="error in v$.confirmPassword.$errors"
+              class="text-danger mt-1"
+              >{{ error.$message }}</span
+            >
+          </div>
 
           <button class="btn btn-dark mt-4 mb-2 w-100" @click="signup">
             Sign Up
@@ -95,6 +156,10 @@ import NavBar from "@/components/NavBar.vue";
 const router = useRouter();
 const errorMessageForAlreadyExistUsername = ref<string>("");
 const showErrorMessageForAlreadyExsitUsername = ref<boolean>(false);
+const showPassword = ref<boolean>(false);
+const showConfirmPassword = ref<boolean>(false);
+const passwordInput = ref<any>();
+const confirmPasswordInput = ref<any>();
 
 onMounted(() => {
   const JwtToken = localStorage.getItem("JwtToken");
@@ -120,9 +185,20 @@ const formRules = computed(() => {
   };
 });
 
+const showPasswordOrHide = (): void => {
+  showPassword.value = !showPassword.value;
+  passwordInput.value.type = showPassword.value == false ? "password" : "text";
+};
+
+const showConfirmPasswordOrHide = (): void => {
+  showConfirmPassword.value = !showConfirmPassword.value;
+  confirmPasswordInput.value.type =
+    showConfirmPassword.value == false ? "password" : "text";
+};
+
 const v$ = useVuelidate(formRules, formData);
 
-const signup = async () => {
+const signup = async (): Promise<void> => {
   const validationResult = await v$.value.$validate();
 
   if (validationResult == true) {

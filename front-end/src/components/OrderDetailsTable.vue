@@ -92,7 +92,7 @@
       </div>
 
       <div
-        class="w-100 d-flex flex-row row p-3 justify-content-around align-items-center"
+        class="w-100 d-flex flex-row row p-3 justify-content-evenly align-items-center"
         v-for="order in orderDetails"
       >
         <ProductCard

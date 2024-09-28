@@ -9,9 +9,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useStore } from "vuex";
 
-const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const JwtToken = ref<string | null>(localStorage.getItem("JwtToken"));
