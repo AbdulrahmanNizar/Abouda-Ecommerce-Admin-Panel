@@ -60,16 +60,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
+import { RequestOptionsType } from "@/types/requestOptionsType";
 
 const router = useRouter();
+const errorForNotFoundUser = ref<string>("");
+const showErrorForNotFoundUser = ref<boolean>(false);
+const filteredUsers = ref<any>([]);
 
 const formData = reactive({
-  newStoreName: "",
-  newStoreAdmins: "",
+  newStoreName: <string>"",
+  newStoreAdmins: <string | any>"",
 });
 
 const formRules = computed(() => {
@@ -77,6 +81,24 @@ const formRules = computed(() => {
     newStoreName: { required },
     newStoreAdmins: { required },
   };
+});
+
+watch(formData.newStoreAdmins, async (newName, oldName): Promise<void> => {
+  if (newName == ",") {
+    newName = "";
+  } else {
+    try {
+      const response = await fetch(
+        `http://192.168.1.241:3000/users-management/filterByUserName/${newName}`
+      );
+      const data = await response.json();
+
+      if (data.statusCode >= 200 && data.statusCode < 300) {
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 });
 
 const v$ = useVuelidate(formRules, formData);
@@ -97,7 +119,32 @@ const createNewStore = async (): Promise<void> => {
 
         if (data.statusCode >= 200 && data.statusCode < 300) {
           storeAdminsIdInArr.push(data.data.userId);
+
+          const requestOptions: RequestOptionsType | any = {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              storeName: formData.newStoreName,
+              storeAdmins: storeAdminsIdInArr,
+            }),
+          };
+
+          const response = await fetch(
+            "http://192.168.1.241:3000/stores-management/createStore",
+            requestOptions
+          );
+          const data2 = await response.json();
+          if (data2.statusCode >= 200 && data2.statusCode < 300) {
+            router.push({ path: "/" });
+          }
         } else {
+          errorForNotFoundUser.value = data.message;
+          showErrorForNotFoundUser.value = true;
+
+          setTimeout(() => {
+            showErrorForNotFoundUser.value = false;
+          }, 3000);
         }
       }
     }
