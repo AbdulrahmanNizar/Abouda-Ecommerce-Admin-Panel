@@ -116,9 +116,9 @@
               >
             </li>
             <li class="nav-item">
-              <button class="btn btn-outline-danger" @click="logout">
-                Logout
-              </button>
+              <a href="#" class="text-danger nav-link" @click="logout"
+                >Logout</a
+              >
             </li>
           </ul>
         </div>

@@ -97,7 +97,7 @@
                 v-model="newAdminNameInput"
               />
 
-              <hr class="w-100" />
+              <hr class="w-100" v-if="newAdminsNamesSuggestion.length > 0" />
             </div>
 
             <div
@@ -158,17 +158,26 @@
           <div
             class="modal-body d-flex flex-column justify-content-center align-items-center"
           >
+            <h5 class="text-center w-100" v-if="newStoreAdminsId.length == 0">
+              Empty
+            </h5>
             <div
               class="w-100 d-flex flex-row justify-content-center align-items-center"
             >
               <div class="list-group w-100">
                 <button
                   type="button"
-                  class="list-group-item list-group-item-action"
+                  class="list-group-item list-group-item-action d-flex flex-row justify-content-between align-items-center"
                   aria-current="true"
-                  v-for="adminName in newStoreAdmins"
+                  v-for="adminId in newStoreAdminsId"
                 >
-                  {{ adminName }}
+                  {{ adminId }}
+                  <button
+                    class="btn btn-dark"
+                    @click="removeAdminFromNewStoreAdminsList(adminId)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </button>
               </div>
             </div>
@@ -184,11 +193,29 @@
 
     <transition name="slideFromTopError">
       <div
-        v-show="showErrorForNewStoreAdmins"
+        v-show="showErrorForAddingNewStoreAdmin"
         class="alert alert-danger w-50 position-absolute start-25 mt-5 top-0 text-center"
         role="alert"
       >
-        {{ errorForNewStoreAdmins }}
+        {{ errorForAddingNewStoreAdmin }}
+      </div>
+    </transition>
+    <transition name="slideFromTopError">
+      <div
+        v-show="showErrorForNotFoundUser"
+        class="alert alert-danger w-50 position-absolute start-25 mt-5 top-0 text-center"
+        role="alert"
+      >
+        {{ errorForNotFoundUser }}
+      </div>
+    </transition>
+    <transition name="slideFromTopError">
+      <div
+        v-show="showErrorForNotEnoughAdmins"
+        class="alert alert-danger w-50 position-absolute start-25 mt-5 top-0 text-center"
+        role="alert"
+      >
+        {{ errorForNotEnoughAdmins }}
       </div>
     </transition>
   </div>
@@ -202,14 +229,19 @@ import useVuelidate from "@vuelidate/core";
 import { RequestOptionsType } from "@/types/requestOptionsType";
 
 const router = useRouter();
+const userId = ref<string | any>(localStorage.getItem("UserId"));
 const userName = ref<string | null>(localStorage.getItem("UserName"));
 const errorForNotFoundUser = ref<string>("");
 const showErrorForNotFoundUser = ref<boolean>(false);
-const errorForNewStoreAdmins = ref<any>([]);
-const showErrorForNewStoreAdmins = ref<boolean>(false);
+const errorForAddingNewStoreAdmin = ref<any>([]);
+const showErrorForAddingNewStoreAdmin = ref<boolean>(false);
 const newAdminNameInput = ref<string>("");
-const newAdminsNamesSuggestion = ref<any>([]);
-const newStoreAdmins = ref<any>([]);
+const newAdminsNamesSuggestion = ref<string[]>([]);
+const newStoreAdmins = ref<string[]>([]);
+const newStoreAdminsId = ref<string[]>([userId.value]);
+const showErrorForNotEnoughAdmins = ref<boolean>(false);
+const errorForNotEnoughAdmins = ref<string>("");
+const theCountOfThePassedAdminsNames = ref<number>(0);
 
 const formData = reactive({
   newStoreName: <string>"",
@@ -225,18 +257,46 @@ const addUserNameSuggestion = (userName: string): void => {
   newAdminNameInput.value = userName;
 };
 
-const addUserAsAdmin = (): void => {
-  if (newStoreAdmins.value.includes(newAdminNameInput.value)) {
-    errorForNewStoreAdmins.value = "User is already added";
-    showErrorForNewStoreAdmins.value = true;
+const addUserAsAdmin = async (): Promise<void> => {
+  newStoreAdmins.value.push(newAdminNameInput.value);
+  newAdminNameInput.value = "";
 
-    setTimeout(() => {
-      showErrorForNewStoreAdmins.value = false;
-    }, 3000);
-  } else {
-    newStoreAdmins.value.push(newAdminNameInput.value);
-    newAdminNameInput.value = "";
+  for (let i = 0; i < newStoreAdmins.value.length; i++) {
+    const response = await fetch(
+      `http://192.168.1.241:3000/users-management/getUserInfo/${newStoreAdmins.value[i]}`
+    );
+    const data = await response.json();
+    if (data.statusCode >= 200 && data.statusCode < 300) {
+      if (!newStoreAdminsId.value.includes(data.data.userId)) {
+        newStoreAdminsId.value.push(data.data.userId);
+        theCountOfThePassedAdminsNames.value += 1;
+      } else {
+        newAdminNameInput.value = "";
+        errorForAddingNewStoreAdmin.value = "User is already added";
+        showErrorForAddingNewStoreAdmin.value = true;
+
+        setTimeout(() => {
+          showErrorForAddingNewStoreAdmin.value = false;
+        }, 3000);
+      }
+    } else {
+      errorForNotFoundUser.value = data.message;
+      showErrorForNotFoundUser.value = true;
+      newStoreAdmins.value.splice(i, 1);
+
+      setTimeout(() => {
+        showErrorForNotFoundUser.value = false;
+      }, 3000);
+    }
   }
+};
+
+const removeAdminFromNewStoreAdminsList = (adminId: string | any) => {
+  const theSelectedAdminNameForDeletingIndex =
+    newStoreAdminsId.value.indexOf(adminId);
+
+  newStoreAdminsId.value.splice(theSelectedAdminNameForDeletingIndex, 1);
+  newStoreAdmins.value.splice(theSelectedAdminNameForDeletingIndex - 1, 1);
 };
 
 watch(newAdminNameInput, async (newAdminName, oldAdminName): Promise<void> => {
@@ -271,41 +331,34 @@ const createNewStore = async (): Promise<void> => {
   try {
     const validationResult = await v$.value.$validate();
 
-    if (validationResult) {
-      // const storeAdminsInArr: string[] = formData.newStoreAdmins.split(",");
-      // const storeAdminsIdInArr: string[] = [];
-      // for (let i = 0; i < storeAdminsInArr.length; i++) {
-      //   const response = await fetch(
-      //     `http://192.168.1.241:3000/users-management/getUserInfo/${storeAdminsInArr[i]}`
-      //   );
-      //   const data = await response.json();
-      //   if (data.statusCode >= 200 && data.statusCode < 300) {
-      //     storeAdminsIdInArr.push(data.data.userId);
-      //     const requestOptions: RequestOptionsType | any = {
-      //       method: "POST",
-      //       mode: "cors",
-      //       headers: { "Content-Type": "application/json" },
-      //       body: JSON.stringify({
-      //         storeName: formData.newStoreName,
-      //         storeAdmins: storeAdminsIdInArr,
-      //       }),
-      //     };
-      //     const response = await fetch(
-      //       "http://192.168.1.241:3000/stores-management/createStore",
-      //       requestOptions
-      //     );
-      //     const data2 = await response.json();
-      //     if (data2.statusCode >= 200 && data2.statusCode < 300) {
-      //       router.push({ path: "/" });
-      //     }
-      //   } else {
-      //     errorForNotFoundUser.value = data.message;
-      //     showErrorForNotFoundUser.value = true;
-      //     setTimeout(() => {
-      //       showErrorForNotFoundUser.value = false;
-      //     }, 3000);
-      //   }
-      // }
+    if (validationResult && newStoreAdminsId.value.length > 1) {
+      if (theCountOfThePassedAdminsNames.value == newStoreAdmins.value.length) {
+        const requestOptions: RequestOptionsType | any = {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            storeName: formData.newStoreName,
+            storeAdmins: newStoreAdminsId.value,
+          }),
+        };
+
+        const response = await fetch(
+          "http://192.168.1.241:3000/stores-management/createStore",
+          requestOptions
+        );
+        const data = await response.json();
+        if (data.statusCode >= 200 && data.statusCode < 300) {
+          router.push({ path: "/" });
+        }
+      }
+    } else {
+      showErrorForNotEnoughAdmins.value = true;
+      errorForNotEnoughAdmins.value = "The admins must be at least 2";
+
+      setTimeout(() => {
+        showErrorForNotEnoughAdmins.value = false;
+      }, 3000);
     }
   } catch (err) {
     console.log(err);
