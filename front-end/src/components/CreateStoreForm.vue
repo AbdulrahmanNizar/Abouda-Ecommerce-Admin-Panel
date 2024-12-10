@@ -230,18 +230,18 @@ import { RequestOptionsType } from "@/types/requestOptionsType";
 
 const router = useRouter();
 const userId = ref<string | any>(localStorage.getItem("UserId"));
-const userName = ref<string | null>(localStorage.getItem("UserName"));
+const userName = ref<string | any>(localStorage.getItem("UserName"));
 const errorForNotFoundUser = ref<string>("");
 const showErrorForNotFoundUser = ref<boolean>(false);
 const errorForAddingNewStoreAdmin = ref<any>([]);
 const showErrorForAddingNewStoreAdmin = ref<boolean>(false);
 const newAdminNameInput = ref<string>("");
 const newAdminsNamesSuggestion = ref<string[]>([]);
-const newStoreAdmins = ref<string[]>([]);
+const newStoreAdmins = ref<string[]>([userName.value]);
 const newStoreAdminsId = ref<string[]>([userId.value]);
 const showErrorForNotEnoughAdmins = ref<boolean>(false);
 const errorForNotEnoughAdmins = ref<string>("");
-const theCountOfThePassedAdminsNames = ref<number>(0);
+const theCountOfThePassedAdminsNames = ref<number>(1);
 
 const formData = reactive({
   newStoreName: <string>"",
@@ -270,14 +270,6 @@ const addUserAsAdmin = async (): Promise<void> => {
       if (!newStoreAdminsId.value.includes(data.data.userId)) {
         newStoreAdminsId.value.push(data.data.userId);
         theCountOfThePassedAdminsNames.value += 1;
-      } else {
-        newAdminNameInput.value = "";
-        errorForAddingNewStoreAdmin.value = "User is already added";
-        showErrorForAddingNewStoreAdmin.value = true;
-
-        setTimeout(() => {
-          showErrorForAddingNewStoreAdmin.value = false;
-        }, 3000);
       }
     } else {
       errorForNotFoundUser.value = data.message;
@@ -289,6 +281,9 @@ const addUserAsAdmin = async (): Promise<void> => {
       }, 3000);
     }
   }
+
+  console.log(theCountOfThePassedAdminsNames.value);
+  console.log(newStoreAdminsId.value);
 };
 
 const removeAdminFromNewStoreAdminsList = (adminId: string | any) => {
@@ -332,7 +327,10 @@ const createNewStore = async (): Promise<void> => {
     const validationResult = await v$.value.$validate();
 
     if (validationResult && newStoreAdminsId.value.length > 1) {
+      console.log("first condition passed");
+      console.log(newStoreAdmins.value);
       if (theCountOfThePassedAdminsNames.value == newStoreAdmins.value.length) {
+        console.log("second condition passed");
         const requestOptions: RequestOptionsType | any = {
           method: "POST",
           mode: "cors",

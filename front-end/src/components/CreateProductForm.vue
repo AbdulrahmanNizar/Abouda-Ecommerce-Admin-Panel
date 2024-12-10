@@ -154,7 +154,7 @@
             <label for="#featuredInput" class="form-check-label"
               >Featured</label
             >
-            <p class="text-muted">This product will appear on the home page</p>
+            <p class="text-muted">This product will appear in the home page</p>
           </div>
         </div>
       </div>

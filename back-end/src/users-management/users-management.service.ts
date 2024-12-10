@@ -26,7 +26,10 @@ export class UsersManagementService {
         data: { username: userInDB[0].username, userId: userInDB[0]._id },
       };
     } else {
-      throw new HttpException("User doesn't exist", 404);
+      throw new HttpException(
+        `The user ${requestInfo.username} doesn't exist`,
+        404,
+      );
     }
   }
 
