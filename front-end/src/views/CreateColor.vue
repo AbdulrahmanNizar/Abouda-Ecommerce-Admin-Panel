@@ -1,5 +1,5 @@
 <template>
-  <div class="h-auto text-black">
+  <div class="h-100 text-black">
     <nav
       class="navbar navbar-expand-lg d-flex flex-row justify-content-start align-items-start border-bottom"
     >
@@ -126,130 +126,29 @@
     </nav>
 
     <div
-      class="w-100 d-flex flex-row justify-content-around align-items-center mt-3 p-3"
+      class="w-100 d-flex flex-row justify-content-center align-items-center"
     >
-      <div
-        class="w-100 d-flex flex-column justify-content-start align-items-start"
-      >
-        <h3 class="fw-bold ms-2 text-start">
-          Colors ({{ yourComputedColors.length }})
-        </h3>
-        <p class="text-start ms-2">Manage colors of your store</p>
-      </div>
-      <div
-        class="d-flex flex-row justify-content-center align-items-center me-4"
-        style="width: 10%"
-      >
-        <router-link class="btn btn-dark" :to="{ path: '/createColor' }"
-          ><i class="bi bi-plus"></i> Add New</router-link
-        >
-      </div>
-    </div>
-
-    <hr class="w-100" />
-
-    <div
-      class="w-100 d-flex flex-column justify-content-start align-items-start"
-    >
-      <div
-        class="d-flex flex-column justify-content-start align-items-start p-3 w-100"
-      >
-        <input
-          type="text"
-          placeholder="Search Color"
-          class="form-control w-50 mb-3"
-          v-model="searchColor"
-        />
-
-        <table
-          class="w-100 mt-3 me-3 bg-none table overflow-x-auto overflow-y-auto"
-          v-if="yourComputedColors.length > 0"
-        >
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Date</th>
-              <th scope="col">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            <transition-group
-              :css="false"
-              @before-enter="onBeforeEnter"
-              @enter="onEnter"
-              @leave="onLeave"
-            >
-              <tr v-for="color in yourComputedColors">
-                <th scope="row">{{ color.colorName }}</th>
-                <td>{{ color.createdAtDate }}</td>
-                <td>
-                  <button
-                    class="btn btn-danger"
-                    @click="deleteColor(color._id)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            </transition-group>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <hr class="w-100" />
-
-    <div
-      class="w-100 text-center d-flex flex-column justify-content-center align-items-center p-3"
-    >
-      <h3>Api Calls</h3>
-      <p>Api calls for colors</p>
-      <hr class="w-100" />
-
-      <ApiCardsForColors />
+      <CreateColorForm />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import gsap from "gsap";
-import ApiCardsForColors from "@/components/ApiCardsForColors.vue";
+import CreateColorForm from "@/components/CreateColorForm.vue";
 
 const store = useStore();
-const searchStore = ref<string>("");
-const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
+const router = useRouter();
+const userId = ref<string | null>(localStorage.getItem("UserId"));
 const currentStoreId = ref<string | null>(localStorage.getItem("StoreId"));
-const searchColor = ref<string>("");
-const newColorName = ref<string>("");
-
-const errorForCreateColors = computed(() => {
-  return store.state.errorForCreateNewColor;
-});
-
-const showErrorForCreateColors = computed(() => {
-  return store.state.showErrorForCreateNewColor;
-});
-
-const currentStoreColors = computed(() => {
-  return store.state.currentStoreColors;
-});
+const currentStoreName = ref<string | null>(localStorage.getItem("StoreName"));
+const searchStore = ref<string>("");
 
 const yourStores = computed(() => {
   return store.state.yourStores;
-});
-
-const yourComputedStores = computed(() => {
-  return yourStores.value.filter((store: any) =>
-    store.storeName.toLowerCase().includes(searchStore.value)
-  );
-});
-
-const yourComputedColors = computed(() => {
-  return currentStoreColors.value.filter((color: any) =>
-    color.colorName.toLowerCase().includes(searchColor.value)
-  );
 });
 
 onMounted(() => {
@@ -262,32 +161,28 @@ onMounted(() => {
   }
 });
 
-const manageThisStore = (storeId: string, storeName: string): void => {
-  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
-};
+const yourComputedStores = computed(() => {
+  return yourStores.value.filter((store: any) =>
+    store.storeName.toLowerCase().includes(searchStore.value)
+  );
+});
 
 const getYourStores = async (): Promise<void> => {
   store.dispatch("getYourStores");
 };
 
 const getYourStoreInformation = async (): Promise<void> => {
-  store.dispatch("getYourStoreInformation");
+  if (currentStoreName.value != "" && currentStoreId.value != "") {
+    store.dispatch("getYourStoreInformation");
+  }
 };
 
 const deleteStore = async (storeId: string): Promise<void> => {
   store.dispatch("deleteStore", { storeId: storeId });
 };
 
-const getYourStoreColors = async (): Promise<void> => {
-  store.dispatch("getColors");
-};
-
-const createNewColor = async (): Promise<void> => {
-  store.dispatch("createNewColor", { newColorName: newColorName.value });
-};
-
-const deleteColor = async (colorId: string): Promise<void> => {
-  store.dispatch("deleteColor", { colorId: colorId });
+const manageThisStore = (storeId: string, storeName: string) => {
+  store.commit("manageThisStore", { storeName: storeName, storeId: storeId });
 };
 
 const logout = async (): Promise<void> => {
@@ -319,5 +214,4 @@ function onLeave(el: any, done: any) {
 
 getYourStores();
 getYourStoreInformation();
-getYourStoreColors();
 </script>

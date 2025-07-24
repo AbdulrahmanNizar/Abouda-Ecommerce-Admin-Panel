@@ -3,10 +3,12 @@
     class="shadow d-lg-flex flex-column justify-content-center align-items-center bg-black bg-gradient h-100 d-none"
     style="width: 39%"
   >
-    <h3 class="text-white text-center">
+    <!-- <h3 class="text-white text-center">
       Abouda E-commrece <br />
       Admin Panel
-    </h3>
+    </h3> -->
+
+    <h3 class="text-white text-center">Stores Manager</h3>
 
     <div class="btn-group">
       <router-link

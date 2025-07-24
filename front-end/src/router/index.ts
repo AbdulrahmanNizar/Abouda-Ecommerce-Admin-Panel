@@ -12,6 +12,7 @@ import Orders from "@/views/Orders.vue";
 import OrderDetails from "@/views/OrderDetails.vue";
 import CreateStore from "@/views/CreateStore.vue";
 import CreateCategories from "@/views/CreateCategories.vue";
+import CreateColor from "@/views/CreateColor.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -110,6 +111,14 @@ const routes: Array<RouteRecordRaw> = [
     component: CreateCategories,
     meta: {
       needsToken: localStorage.getItem("JwtToken") ? false : true,
+    },
+  },
+  {
+    name: "CreateColor",
+    path: "/createColor",
+    component: CreateColor,
+    meta: {
+      needsAuth: localStorage.getItem("JwtToken") ? false : true,
     },
   },
 ];
